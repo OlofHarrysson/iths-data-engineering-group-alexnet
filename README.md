@@ -30,6 +30,4 @@ source venv/bin/activate
 **Important**: All your python code should go inside of the src/newsfeed folder. This makes it so that you can "build" your own python package easily and not have problems with the PYTHONPATH i.e. not being able to import code from other files.
 
 
-## Pull Request Practice
-
 
