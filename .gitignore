@@ -140,3 +140,9 @@ dmypy.json
 
 # macOS
 .DS_Store
+
+.Pipfile
+
+.Pipfile.lock
+
+*Pip
