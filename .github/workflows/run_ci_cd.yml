@@ -1,0 +1,25 @@
+---
+name: Checkout Git Repo with python 3.10
+
+on:
+  push:
+    branches:
+    - 18-setup-cicd-to-checkout-git-repo-with-python-310
+
+jobs:
+
+  install-python:
+    name: Install Python
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: check code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.10.10
+
+    - name: Display Python version
+      run: python --version
