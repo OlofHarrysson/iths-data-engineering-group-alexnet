@@ -6,12 +6,12 @@ import openai
 import requests
 import schedule
 
-# Set your OpenAI API key here
+# OpenAI API key
 OPENAI_API_KEY = "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"
 
 openai.api_key = OPENAI_API_KEY
 
-# Your Discord webhook URL here
+# Discord webhook URL
 DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1131522847509069874/Lwk1yVc4w623xpRPkKYu9faFdMNvV5HTZ3TCcL5DgsIgeqhEvo9tBookvuh2S4IWysTt"
 
 # Global variables to track the number of messages sent and the current date
@@ -81,6 +81,7 @@ async def check_and_send():
             await asyncio.sleep(5)  # Add a 5-second delay between messages
 
 
+# asyncio loop
 async def main():
     while True:
         schedule.run_pending()
