@@ -143,3 +143,6 @@ dmypy.json
 
 # API-Key
 api-key.json
+
+# Python path
+python_path.txt
