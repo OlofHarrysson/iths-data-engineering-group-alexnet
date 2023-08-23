@@ -28,5 +28,9 @@ jobs:
     - name: Display Installed Dependencies
       run: python -m pip freeze
 
+    - name: Run Tests
+      run: python -m pytest
+
     - name: Run pre-commit
       run: pre-commit run --all-files
+
