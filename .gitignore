@@ -140,3 +140,9 @@ dmypy.json
 
 # macOS
 .DS_Store
+
+
+
+
+# Python path
+python_path.txt
