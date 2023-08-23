@@ -8,3 +8,5 @@ requests
 beautifulsoup4
 lxml
 pydantic==1.10.10
+openai
+schedule
