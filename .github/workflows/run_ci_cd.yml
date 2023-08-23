@@ -23,7 +23,7 @@ jobs:
       run: python --version
 
     - name: Install Dependencies
-      run: make install
+      run: make install_dependencies
 
     - name: Display Installed Dependencies
       run: python -m pip freeze
