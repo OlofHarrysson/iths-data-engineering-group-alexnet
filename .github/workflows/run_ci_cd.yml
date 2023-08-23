@@ -2,7 +2,7 @@
 name: Install python 3.10.10
 
 on:
-  push:
+  pull_request:
 
 jobs:
 
