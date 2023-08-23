@@ -141,8 +141,13 @@ dmypy.json
 # macOS
 .DS_Store
 
+.Pipfile
+.Pipfile.lock
+
+*Pip
 # API-Key
 api-key.json
 
 # Python path
 python_path.txt
+
