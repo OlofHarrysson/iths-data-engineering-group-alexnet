@@ -1,7 +1,7 @@
 # Describe your changes
 
 Please be thorough with your changes,
-- If your teammembers need to do an action please provide a step by step guide.
+- If your team members need to do an action please provide a step by step guide.
 
 ## Mandatory: Have you done the following?
 - [ ] Described your changes :point_up:
