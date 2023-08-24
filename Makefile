@@ -1,13 +1,14 @@
 PYTHON := $(shell cat src/newsfeed/python_path.txt)
-SHELL := /bin/bash
+VENV_PATH := $(USERPROFILE)/venv
+VENV_ACTIVATE := $(VENV_PATH)/Scripts/activate
 
 install_dependencies:
-	$(PYTHON) -m venv venv
-	source venv/bin/activate && pip install -r requirements.txt
-	source venv/bin/activate && pre-commit install --hook-type pre-push --hook-type post-checkout --hook-type pre-commit
+	"$(PYTHON)" -m venv "$(VENV_PATH)"
+	. "$(VENV_ACTIVATE)" && pip install -r requirements.txt
+	. "$(VENV_ACTIVATE)" && pre-commit install --hook-type pre-push --hook-type post-checkout --hook-type pre-commit
 
 run_precommit:
-	pre-commit run --all-files
+	. "$(VENV_ACTIVATE)" && pre-commit run --all-files
 
 run_tests:
-	pytest tests/
+	. "$(VENV_ACTIVATE)" && pytest tests/
