@@ -6,10 +6,11 @@ import openai
 import requests
 import schedule
 
-# OpenAI API key
-OPENAI_API_KEY = "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"
+# Get key
+with open("api-key.json") as f:
+    OPENAI_API_KEY = json.load(f)
 
-openai.api_key = OPENAI_API_KEY
+openai.api_key = OPENAI_API_KEY["OPENAI_API_KEY"]
 
 # Discord webhook URL
 DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1131522847509069874/Lwk1yVc4w623xpRPkKYu9faFdMNvV5HTZ3TCcL5DgsIgeqhEvo9tBookvuh2S4IWysTt"
