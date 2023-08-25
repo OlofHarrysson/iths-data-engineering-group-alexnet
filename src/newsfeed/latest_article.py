@@ -29,7 +29,3 @@ def get_latest_article() -> str:
                 latest_id = data["unique_id"]
 
     return latest_id
-
-
-if __name__ == "__main__":
-    print(get_latest_article())
