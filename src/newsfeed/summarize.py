@@ -13,16 +13,26 @@ with open("api-key.json") as f:
 openai.api_key = OPENAI_API_KEY["OPENAI_API_KEY"]
 
 
-def summarize_text(article_text) -> str:
-    prompt = f"Summarize the following text:\n{article_text}\nSummary:"
-    response = openai.Completion.create(
-        engine="gpt-3.5-turbo",
-        prompt=prompt,
-        max_tokens=200,  # We might want to make this an input argument, or in some other way adjust this
+def summarize_text(article_text, prefix=None) -> str:
+    base_prompt = f"Summarize the following text:\n{article_text}\n"
+
+    if prefix is None:
+        prompt = base_prompt + "Summary:"
+    else:
+        prompt = f"{prefix}, " + base_prompt + "Summary:"
+
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": f"You are a creative assistant that summarizes text. The user have provided you with an additional request: {prefix}",
+            },
+            {"role": "user", "content": prompt},
+        ],
+        max_tokens=200,
     )
-    summary = response.choices[
-        0
-    ].text.strip()  # GPT-3 can provide multiple completion suggestions, we just take the first
+    summary = response.choices[0].message["content"].strip()
     return summary
 
 
@@ -60,13 +70,14 @@ def create_summary_json(input_dir, output_dir, summary_type):
 # create_summary_json(input_dir, output_dir, summary_type)
 
 
-# json_file_path = "data/data_warehouse/mit/articles/c709b2dc-8d59-5dce-85c6-b3642aa7c54b_Three_Spanish_MIT_physics_postdocs_receive_Botton_Foundation_fellowships.json"
+json_file_path = "data/data_warehouse/mit/articles/c709b2dc-8d59-5dce-85c6-b3642aa7c54b_Three_Spanish_MIT_physics_postdocs_receive_Botton_Foundation_fellowships.json"
 
-# with open(json_file_path, "r") as file:
-#     json_data = json.load(file)
+with open(json_file_path, "r") as file:
+    json_data = json.load(file)
 
-# blog_text = json_data["blog_text"]
+blog_text = json_data["blog_text"]
 
-# #print(blog_text)
+# print(blog_text)
 
-# print(summarize_text(blog_text))
+print(summarize_text(blog_text, prefix="With easy, simplified english"))
+print(summarize_text(blog_text, prefix="In swedish please"))
