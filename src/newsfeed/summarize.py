@@ -58,7 +58,12 @@ def create_summary_json(input_dir, output_dir, summary_type):
 
                 # Here we can call summarize_text()
                 # To avoid api-calls, this should not be done before Prompt Engineering stage has been complete
-                blog_summary = BlogSummary(**json_content)  # Placeholder
+                blog_summary = BlogSummary(**json_content)
+
+                # Placeholder / example TODO: not hard code it to french (once prompt engineer stage complete)
+                blog_summary.summary = summarize_text(
+                    json_content["blog_text"], prefix="In french please"
+                )
 
                 # Only static text (e.g. "English Simplified", "Swedish Technical")
                 blog_summary.type_of_summary = summary_type
@@ -92,7 +97,7 @@ blog_text = json_data["blog_text"]
 # print(blog_text)
 
 create_summary_json(
-    "data/data_warehouse/mit2-test", "data/data_warehouse", "Swedish"
+    "data/data_warehouse/mit2-test", "data/data_warehouse", "French"
 )  # Test dir containing only a few articles
 
 # print(summarize_text(blog_text, prefix="With easy, simplified english"))
