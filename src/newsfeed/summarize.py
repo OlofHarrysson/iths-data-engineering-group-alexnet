@@ -2,7 +2,6 @@ import json
 import os
 from pathlib import Path
 
-# import langchain
 import openai
 
 from newsfeed.datatypes import BlogSummary
@@ -17,7 +16,7 @@ openai.api_key = OPENAI_API_KEY["OPENAI_API_KEY"]
 def summarize_text(article_text) -> str:
     prompt = f"Summarize the following text:\n{article_text}\nSummary:"
     response = openai.Completion.create(
-        engine="text-davinci-003",  # GPT-3 since it's cheaper
+        engine="gpt-3.5-turbo",
         prompt=prompt,
         max_tokens=200,  # We might want to make this an input argument, or in some other way adjust this
     )
@@ -30,7 +29,6 @@ def summarize_text(article_text) -> str:
 # Creates new json files with BlogSummary class
 # TODO: Check if output already exist (no duplicates)
 # TODO: mkdir in function (should probably be in data/data_warehouse/{blog_name}/summary_type)
-# TODO: format code better
 
 
 def create_summary_json(input_dir, output_dir, summary_type):
