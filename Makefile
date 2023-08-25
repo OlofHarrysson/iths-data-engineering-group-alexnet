@@ -36,7 +36,7 @@ run_tests:
 
 all:
 	echo "Hello World!"
-=======
+
 # Determine OS
 ifeq ($(OS),Windows_NT)
 	detected_OS := Windows
