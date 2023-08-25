@@ -26,7 +26,7 @@ def load_metadata(blog_name):
 def extract_articles_from_xml(parsed_xml):
     articles = []
     for item in parsed_xml.find_all("item"):
-        raw_blog_text = item.find("content:encoded").text
+        raw_blog_text = item.find("encoded").text
         soup = BeautifulSoup(raw_blog_text, "html.parser")
         blog_text = soup.get_text()
         title = item.title.text
