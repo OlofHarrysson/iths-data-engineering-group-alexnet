@@ -36,12 +36,18 @@ def summarize_text(article_text, prefix=None) -> str:
     return summary
 
 
-# Creates new json files with BlogSummary class
-# TODO: Check if output already exist (no duplicates)
-# TODO: mkdir in function (should probably be in data/data_warehouse/{blog_name}/summary_type)
+# Generate new json files with BlogSummary class
 
 
 def create_summary_json(input_dir, output_dir, summary_type):
+    # Create subdir for each summary type
+    output_dir = os.path.join(output_dir, summary_type)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    # Set to keep track of existing output files
+    existing_outputs = set(os.listdir(output_dir))
+
     # Iterate through input directory
     for filename in os.listdir(input_dir):
         if filename.endswith(".json"):
@@ -50,17 +56,23 @@ def create_summary_json(input_dir, output_dir, summary_type):
             with open(json_path, "r") as file:
                 json_content = json.load(file)
 
-                # !! Here we can call summarize_text()
-                blog_summary = BlogSummary(**json_content)
+                # Here we can call summarize_text()
+                # To avoid api-calls, this should not be done before Prompt Engineering stage has been complete
+                blog_summary = BlogSummary(**json_content)  # Placeholder
 
                 # Only static text (e.g. "English Simplified", "Swedish Technical")
                 blog_summary.type_of_summary = summary_type
 
-                new_json_file = blog_summary.get_filename()
-                new_json_path = os.path.join(output_dir, new_json_file)
+                sum_file = blog_summary.get_filename()
+                new_json_path = os.path.join(output_dir, sum_file)
 
-                with open(new_json_path, "w") as new_file:
-                    json.dump(blog_summary.dict(), new_file, indent=4)
+                # Check if output already exist (Or should we overwrite?)
+                if sum_file not in existing_outputs:
+                    with open(new_json_path, "w") as new_file:
+                        json.dump(blog_summary.dict(), new_file, indent=4)
+                    existing_outputs.add(sum_file)
+                else:
+                    print(f"{sum_file} already exist.")
 
 
 # input_dir = "data/data_warehouse/mit/articles"
@@ -79,5 +91,9 @@ blog_text = json_data["blog_text"]
 
 # print(blog_text)
 
-print(summarize_text(blog_text, prefix="With easy, simplified english"))
-print(summarize_text(blog_text, prefix="In swedish please"))
+create_summary_json(
+    "data/data_warehouse/mit2-test", "data/data_warehouse", "Swedish"
+)  # Test dir containing only a few articles
+
+# print(summarize_text(blog_text, prefix="With easy, simplified english"))
+# print(summarize_text(blog_text, prefix="In swedish please"))
