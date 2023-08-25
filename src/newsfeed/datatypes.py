@@ -15,5 +15,19 @@ class BlogInfo(pydantic.BaseModel):
     timestamp: datetime
 
     def get_filename(self):
-        filename = f'{self.title.replace(" ", "_")}.json'
+        # filename = f'{self.title.replace(" ", "_")}.json'
+        filename = f"{self.unique_id}_{self.title.replace(' ', '_')}.json"
+
+        return filename
+
+
+# Class for summary of articles in different technical levels of language
+class BlogSummary(pydantic.BaseModel):
+    unique_id: str
+    summary: str
+    type_of_summary: str = "DefaultSummaryType"
+
+    def get_filename(self):
+        filename = f"{self.unique_id}_{self.type_of_summary.replace(' ', '_')}.json"
+
         return filename
