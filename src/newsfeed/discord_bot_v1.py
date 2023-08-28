@@ -1,5 +1,7 @@
 import asyncio
 import datetime
+import json
+import os
 import xml.etree.ElementTree as ET
 
 import openai
@@ -13,7 +15,7 @@ with open("api-key.json") as f:
 openai.api_key = OPENAI_API_KEY["OPENAI_API_KEY"]
 
 # Discord webhook URL
-DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1131522847509069874/Lwk1yVc4w623xpRPkKYu9faFdMNvV5HTZ3TCcL5DgsIgeqhEvo9tBookvuh2S4IWysTt"
+DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1144176316535541773/xbf8ien_4kcghHum5NpqH1gGWuuOJeSxfLWRAzCiMuSRIE-jI0EENx95EgMcT875LUdO"
 
 # Global variables to track the number of messages sent and the current date
 messages_sent_today = 0
@@ -62,14 +64,24 @@ async def check_and_send():
     global messages_sent_today, current_date  # Use the global variables
     today = datetime.date.today()
 
+    # Construct the path to the XML metadata file dynamically
+    metadata_file_path = os.path.join(
+        os.path.expanduser("~"),
+        "Desktop",
+        "Github",
+        "iths-data-engineering-group-alexnet",
+        "data",
+        "data_lake",
+        "mit",
+        "metadata.xml",
+    )
+
     # If it's a new day, reset the messages_sent_today count
     if today != current_date:
         current_date = today
         messages_sent_today = 0
 
-    articles = parse_xml_metadata(
-        "C:/Users/user/Desktop/Github/iths-data-engineering-group-alexnet/data/data_lake/mit/metadata.xml"
-    )
+    articles = parse_xml_metadata(metadata_file_path)
 
     # Limit to sending 2 messages per day
     if messages_sent_today < 3:
