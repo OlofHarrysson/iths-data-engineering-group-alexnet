@@ -10,6 +10,8 @@ from newsfeed.datatypes import BlogInfo
 
 
 def create_uuid_from_string(title):
+    if title is None or title == "":
+        return None
     assert isinstance(title, str)
     return str(uuid.uuid5(uuid.NAMESPACE_DNS, title))
 

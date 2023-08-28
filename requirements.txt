@@ -2,6 +2,7 @@
 black
 isort
 pytest
+pytest-mock
 pandas
 pre-commit
 requests
