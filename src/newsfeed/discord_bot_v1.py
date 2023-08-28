@@ -8,6 +8,9 @@ import openai
 import requests
 import schedule
 
+# Import the summarize_text function from the summarize.py file
+from summarize import summarize_text
+
 # Get key
 with open("api-key.json") as f:
     OPENAI_API_KEY = json.load(f)
@@ -15,37 +18,23 @@ with open("api-key.json") as f:
 openai.api_key = OPENAI_API_KEY["OPENAI_API_KEY"]
 
 # Discord webhook URL
-DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1144176316535541773/xbf8ien_4kcghHum5NpqH1gGWuuOJeSxfLWRAzCiMuSRIE-jI0EENx95EgMcT875LUdO"
+DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1131522847509069874/Lwk1yVc4w623xpRPkKYu9faFdMNvV5HTZ3TCcL5DgsIgeqhEvo9tBookvuh2S4IWysTt"
 
 # Global variables to track the number of messages sent and the current date
 messages_sent_today = 0
 current_date = datetime.date.today()
 
-
-# Parse XML metadata
-def parse_xml_metadata(xml_path):
-    tree = ET.parse(xml_path)
-    root = tree.getroot()
-    articles = []
-
-    for item in root.findall(".//item"):
-        title = item.find("title").text
-        description = item.find("description").text
-        articles.append({"title": title, "description": description})
-
-    return articles
-
-
-# Summarize text using OpenAI API
-def summarize_text(article):
-    prompt = f"Summarize the following text:\n{article['description']}\nSummary:"
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
-        max_tokens=200,
-    )
-    summary = response.choices[0].text.strip()
-    return summary
+# Construct the path to the XML metadata file dynamically
+metadata_file_path = os.path.join(
+    os.path.expanduser("~"),
+    "Desktop",
+    "Github",
+    "iths-data-engineering-group-alexnet",
+    "data",
+    "data_lake",
+    "mit",
+    "metadata.xml",
+)
 
 
 # Send message to Discord with Markdown formatting
@@ -64,24 +53,20 @@ async def check_and_send():
     global messages_sent_today, current_date  # Use the global variables
     today = datetime.date.today()
 
-    # Construct the path to the XML metadata file dynamically
-    metadata_file_path = os.path.join(
-        os.path.expanduser("~"),
-        "Desktop",
-        "Github",
-        "iths-data-engineering-group-alexnet",
-        "data",
-        "data_lake",
-        "mit",
-        "metadata.xml",
-    )
-
     # If it's a new day, reset the messages_sent_today count
     if today != current_date:
         current_date = today
         messages_sent_today = 0
 
-    articles = parse_xml_metadata(metadata_file_path)
+    # Parse XML metadata
+    tree = ET.parse(metadata_file_path)
+    root = tree.getroot()
+    articles = []
+
+    for item in root.findall(".//item"):
+        title = item.find("title").text
+        description = item.find("description").text
+        articles.append({"title": title, "description": description})
 
     # Limit to sending 2 messages per day
     if messages_sent_today < 3:
