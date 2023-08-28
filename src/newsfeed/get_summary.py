@@ -31,6 +31,3 @@ def get_summary(summary_type) -> str:
         else:
             # if no summary was found.
             return "found no summary."
-
-
-print(get_summary("French"))
