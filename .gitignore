@@ -141,13 +141,17 @@ dmypy.json
 # macOS
 .DS_Store
 
+# PIP
 .Pipfile
 .Pipfile.lock
-
 *Pip
+
 # API-Key
 api-key.json
 
 # Python path
 python_path.txt
 
+# Dashboard App
+app/.next
+app/node_modules
