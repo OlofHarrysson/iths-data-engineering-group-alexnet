@@ -68,11 +68,10 @@ def create_summary_json(input_dir, output_dir, summary_type):
             sum_file = blog_summary.get_filename()
             new_json_path = os.path.join(output_dir, sum_file)
 
-
-                # Check if output already exist (Or should we overwrite?)
-                if sum_file not in existing_outputs:
-                    with open(new_json_path, "w") as new_file:
-                        json.dump(blog_summary.dict(), new_file, indent=4)
-                    existing_outputs.add(sum_file)
-                else:
-                    print(f"{sum_file} already exist.")
+            # Check if output already exist (Or should we overwrite?)
+            if sum_file not in existing_outputs:
+                with open(new_json_path, "w") as new_file:
+                    json.dump(blog_summary.dict(), new_file, indent=4)
+                existing_outputs.add(sum_file)
+            else:
+                print(f"{sum_file} already exist.")

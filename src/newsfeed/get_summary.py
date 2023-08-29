@@ -19,6 +19,7 @@ def find_file(file_name, folder_path):
     # if no file was found returns none.
     return None
 
+
 def get_summary(blog_identifier: str, summary_type: str) -> str:
     # id of newest article.
     article_id = get_latest_article(blog_identifier)
