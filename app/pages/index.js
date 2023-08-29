@@ -1,34 +1,44 @@
-import React, { useState } from 'react';
-import jsonData from "../../data/data_warehouse/Explain like i'm five/9b3fc437-d1ce-5ad5-b8a6-1de70da8010e_Explain_like_i'm_five.json";
+// pages/index.js
+import React from 'react';
+import Header from '../components/Header';
+import ArticleList from '../components/ArticleList';
+import ArticleDetails from '../components/ArticleDetails';
 
-function Header({ title }) {
-  return <h1>{title ? title : 'Default title'}</h1>;
-}
-
-export default function HomePage() {
-  const names = ['Alice', 'is', 'SIMPIN'];
-  const [likes, setLikes] = useState(0);
-
-  function handleClick() {
-    setLikes(likes + 1);
+const data = [
+  {
+    title: "Article #1",
+    description: "wubadubadub wubalub dub."
+  },
+  {
+    title: "Article #2",
+    description: "Another interesting article."
+  },
+  {
+    title: "Article #3",
+    description: "A third article to showcase."
+  },
+  {
+    title: "Article #4",
+    description: "A fourth article to showcase."
+  },
+  {
+    title: "Article #5",
+    description: "A fifth article to showcase."
   }
+];
 
+const Home = () => {
   return (
     <div>
-      <Header title="Alexnet Daeshboard" />
-      <ul>
-        {names.map((name) => (
-          <li key={name}>{name}</li>
-        ))}
-      </ul>
-
-
-      <div>
-        <h2>{jsonData.type_of_summary}</h2>
-        <p>{jsonData.summary}</p>
-      </div>
-      <button onClick={handleClick}>Like ({likes})</button>
+      <Header />
+      <main>
+        <div class="article-list">
+        <ArticleList data={data} />
+        <ArticleDetails />
+        </div>
+      </main>
     </div>
-
   );
-}
+};
+
+export default Home;
