@@ -1,0 +1,10 @@
+In this directory, run:
+"npm install react react-dom next"
+
+# You will need to have Node.js installed on your machine: https://nodejs.org/en
+
+Then, run:
+
+"npm start"
+
+That's it!

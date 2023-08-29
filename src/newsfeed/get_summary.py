@@ -22,7 +22,7 @@ def find_file(file_name, folder_path):
 
 def get_summary(summary_type) -> str:
     # id of newest article.
-    article_id = get_latest_article()
+    article_id, title, link = get_latest_article()
 
     # path to summarys.
     directory_path = f"data/data_warehouse/{summary_type}"
@@ -37,7 +37,7 @@ def get_summary(summary_type) -> str:
             data = json.load(file)
 
             # returns summary.
-            return data["summary"]
+            return data["summary"], title, link
 
     else:
         # if file is none generate a summary.
@@ -50,6 +50,3 @@ def get_summary(summary_type) -> str:
 
         # success message.
         return f"Successfuly cretated a summary of type {summary_type}"
-
-
-print(get_summary("French"))

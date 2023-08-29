@@ -8,6 +8,8 @@ import openai
 import requests
 import schedule
 
+from newsfeed.get_summary import get_summary
+
 # Get key
 with open("api-key.json") as f:
     OPENAI_API_KEY = json.load(f)
@@ -49,9 +51,9 @@ def summarize_text(article):
 
 
 # Send message to Discord with Markdown formatting
-def send_discord_message(webhook_url, title, summary):
+def send_discord_message(webhook_url, title, summary, link):
     global messages_sent_today  # Use the global variable
-    message = f"**Group-name:** alexnet\n# {title}\n### Summary:\n\n{summary}"
+    message = f"**Group-name:** alexnet\n# {title}\n### Summary:\n\n{summary} \n\n link:{link}"
     embed = {"description": message, "color": 0x00FF00}
     payload = {"embeds": [embed]}
     response = requests.post(webhook_url, json=payload)
@@ -88,8 +90,9 @@ async def check_and_send():
         for article in articles:
             if messages_sent_today >= 3:
                 break
-            summary = summarize_text(article)
-            send_discord_message(DISCORD_WEBHOOK_URL, article["title"], summary)
+            # summary = summarize_text(article)
+            summary, title, link = get_summary("French")
+            send_discord_message(DISCORD_WEBHOOK_URL, title, summary, link)
             messages_sent_today += 1
             await asyncio.sleep(5)  # Add a 5-second delay between messages
 
