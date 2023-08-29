@@ -1,0 +1,23 @@
+.article-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    background-color: #ffffff;
+  }
+
+.article {
+    border: 1px solid rgba(0, 0, 0, 0.442);
+    background-color: #15074060;
+    padding: 10px;
+    margin: 10px;
+    width: 200px;
+    text-align: center;
+    border-radius: 4px;
+    box-shadow: 0 5px 4px rgba(0, 0, 0, 0.239);
+
+  }
+
+.article a {
+  color: #e1e1e1;
+  font-size: 0.8rem;
+}
