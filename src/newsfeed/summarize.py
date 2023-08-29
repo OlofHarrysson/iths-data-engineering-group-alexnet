@@ -75,27 +75,3 @@ def create_summary_json(input_dir, output_dir, summary_type):
                 existing_outputs.add(sum_file)
             else:
                 print(f"{sum_file} already exist.")
-
-
-# input_dir = "data/data_warehouse/mit/articles"
-# output_dir = "data/data_warehouse/test3"
-# summary_type = "NewSummaryType"
-
-# create_summary_json(input_dir, output_dir, summary_type)
-
-
-json_file_path = "data/data_warehouse/mit/articles/c709b2dc-8d59-5dce-85c6-b3642aa7c54b_Three_Spanish_MIT_physics_postdocs_receive_Botton_Foundation_fellowships.json"
-
-with open(json_file_path, "r") as file:
-    json_data = json.load(file)
-
-blog_text = json_data["blog_text"]
-
-# print(blog_text)
-
-# create_summary_json(
-#     "data/data_warehouse/mit2-test", "data/data_warehouse", "Explain like i'm five"
-# )  # Test dir containing only a few articles
-
-# print(summarize_text(blog_text, prefix="With easy, simplified english"))
-# print(summarize_text(blog_text, prefix="In swedish please"))

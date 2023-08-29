@@ -3,8 +3,8 @@ import json
 import os
 
 
-def get_latest_article() -> str:
-    directory_path = "data/data_warehouse/mit/articles"
+def get_latest_article(blog_identifier: str) -> str:
+    directory_path = f"data/data_warehouse/{blog_identifier}/articles"
 
     # list of json files.
     article_list = os.listdir(directory_path)

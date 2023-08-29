@@ -20,12 +20,12 @@ def find_file(file_name, folder_path):
     return None
 
 
-def get_summary(summary_type) -> str:
+def get_summary(blog_identifier: str, summary_type: str) -> str:
     # id of newest article.
-    article_id, title, link = get_latest_article()
+    article_id = get_latest_article(blog_identifier)
 
     # path to summarys.
-    directory_path = f"data/data_warehouse/{summary_type}"
+    directory_path = f"data/data_warehouse/{blog_identifier}/{summary_type}"
 
     # gets file path
     file = find_file(article_id, directory_path)
