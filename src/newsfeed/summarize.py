@@ -18,6 +18,7 @@ def summarize_text(article_text, prefix=None) -> str:
 
     if prefix is None:
         prompt = base_prompt + "Summary:"
+
     else:
         prompt = f"{prefix}, " + base_prompt + "Summary:"
 
@@ -33,6 +34,7 @@ def summarize_text(article_text, prefix=None) -> str:
         max_tokens=200,
     )
     summary = response.choices[0].message["content"].strip()
+    
     return summary
 
 

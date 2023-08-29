@@ -18,6 +18,7 @@ async def send_discord_message(webhook_url, group_name, blog_title, summary):
     response = requests.post(webhook_url, json=payload)
 
     # Check if the request was successful, otherwise raise an exception
+
     response.raise_for_status()
 
 
@@ -36,6 +37,7 @@ async def main():
 
 
 # Check if the script is being run directly (not imported as a module)
+
 if __name__ == "__main__":
     # Run the main asynchronous function using the asyncio.run() function
     asyncio.run(main())

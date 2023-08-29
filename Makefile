@@ -14,6 +14,7 @@ else
 	SHELL := /bin/bash
 	PYTHON := python3.10
 	VENV_PATH := ./venv
+	
 	VENV_ACTIVATE := $(VENV_PATH)/bin/activate
 endif
 
