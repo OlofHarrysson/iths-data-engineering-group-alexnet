@@ -28,4 +28,4 @@ def get_latest_article(blog_identifier: str) -> str:
                 latest_date = article_date
                 latest_id = data["unique_id"]
 
-    return latest_id
+    return latest_id, data["title"], data["link"]
