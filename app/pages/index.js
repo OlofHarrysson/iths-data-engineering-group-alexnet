@@ -15,7 +15,7 @@ export default function HomePage() {
 
   return (
     <div>
-      <Header title="Alexnet داعشboard" />
+      <Header title="Alexnet Daeshboard" />
       <ul>
         {names.map((name) => (
           <li key={name}>{name}</li>
