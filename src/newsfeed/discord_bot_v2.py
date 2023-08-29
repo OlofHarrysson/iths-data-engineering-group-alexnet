@@ -3,9 +3,13 @@ import datetime
 import json
 import os
 import xml.etree.ElementTree as ET
-
 import requests
 import schedule
+
+#imported libraries 
+
+
+# Built in packages
 
 # Import the get_summary function
 from newsfeed import get_summary
@@ -34,7 +38,6 @@ metadata_file_path = os.path.join(
 )
 
 
-# Send message to Discord with Markdown formatting
 # Send message to Discord with Markdown formatting
 def send_discord_message(webhook_url, group_name, title, summary, published_date, article_link):
     global messages_sent_today
@@ -87,11 +90,11 @@ async def check_and_send():
             summary = get_summary("Explain like i'm five")  # Replace with correct summary type
             send_discord_message(
                 DISCORD_WEBHOOK_URL,
-                "alexnet",  # Replace with your group name
+                "alexnet",
                 article["title"],
                 summary,
-                article["published"],  # Assuming this is available from your data
-                article["link"],  # Assuming this is available from your data
+                article["published"],
+                article["link"],
             )
             messages_sent_today += 1
             await asyncio.sleep(5)
