@@ -12,6 +12,8 @@ with open("api-key.json") as f:
 
 openai.api_key = OPENAI_API_KEY["OPENAI_API_KEY"]
 
+summary_types = {"non_technical": "non technical.", "french": "in french."}
+
 
 def summarize_text(article_text, prefix=None) -> str:
     base_prompt = f"Summarize the following text:\n{article_text}\n"
@@ -36,17 +38,32 @@ def summarize_text(article_text, prefix=None) -> str:
     return summary
 
 
+def get_save_path(input_dir):
+    root_paths = {
+        "mit": "data/data_warehouse/mit/summaries",
+        "ts": "data/data_warehouse/ts/summaries",
+    }
+
+    for key in root_paths:
+        if key in input_dir:
+            return root_paths[key]
+
+    return "No root path found"
+
+
 # Generate new json files with BlogSummary class
+def create_summary_json(input_dir, summary_type):
+    if summary_type in summary_types:
+        # Create subdir for each summary type
+        output_dir = os.path.join(get_save_path(input_dir), summary_type)
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
 
-
-def create_summary_json(input_dir, output_dir, summary_type):
-    # Create subdir for each summary type
-    output_dir = os.path.join(output_dir, summary_type)
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    else:
+        return "Fail"
 
     # Set to keep track of existing output files
-    existing_outputs = set(os.listdir(output_dir))
+    existing_outputs = set(os.listdir(get_save_path(input_dir)))
 
     # Iterate through input directory
 
@@ -60,13 +77,15 @@ def create_summary_json(input_dir, output_dir, summary_type):
             # To avoid api-calls, this should not be done before Prompt Engineering stage has been complete
             blog_summary = BlogSummary(**json_content)
 
-            blog_summary.summary = summarize_text(json_content["blog_text"], prefix=summary_type)
+            blog_summary.summary = summarize_text(
+                json_content["blog_text"], prefix=summary_types[summary_type]
+            )
 
             # Only static text (e.g. "English Simplified", "Swedish Technical")
             blog_summary.type_of_summary = summary_type
 
             sum_file = blog_summary.get_filename()
-            new_json_path = os.path.join(output_dir, sum_file)
+            new_json_path = os.path.join(get_save_path(input_dir), summary_type, sum_file)
 
             # Check if output already exist (Or should we overwrite?)
             if sum_file not in existing_outputs:
