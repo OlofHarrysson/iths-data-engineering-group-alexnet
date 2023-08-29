@@ -6,7 +6,7 @@ from newsfeed.latest_article import get_latest_article
 
 def get_summary(summary_type) -> str:
     # id of newest article.
-    article_id = get_latest_article()
+    article_id, title, link = get_latest_article()
 
     # path to summarys.
     directory_path = f"data/data_warehouse/{summary_type}"
@@ -26,7 +26,7 @@ def get_summary(summary_type) -> str:
                 data = json.load(file)
 
                 # returns summary.
-                return data["summary"]
+                return data["summary"], title, link
 
         else:
             # if no summary was found.
