@@ -151,3 +151,5 @@ api-key.json
 # Python path
 python_path.txt
 
+Pipfile
+Pipfile.lock
