@@ -3,17 +3,19 @@ import datetime
 import json
 import os
 import xml.etree.ElementTree as ET
+
 import requests
 import schedule
-
-#imported libraries 
-
-
-# Built in packages
 
 # Import the get_summary function
 from newsfeed import get_summary
 from newsfeed.get_summary import get_summary
+
+# imported libraries
+
+
+# Built in packages
+
 
 summary = get_summary("Explain like i'm five")  # Replace with correct summary type
 
