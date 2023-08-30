@@ -26,9 +26,10 @@ Execute this script to automatically collect article summaries and broadcast the
 import asyncio
 import json
 import os
+import xml.etree.ElementTree as ElementTree
+
 import requests
 import schedule
-import xml.etree.ElementTree as ElementTree
 
 # Import functions from his script
 from summarize import get_latest_article, summarize_text
