@@ -15,8 +15,9 @@ openai.api_key = OPENAI_API_KEY["OPENAI_API_KEY"]
 
 summary_types = {
     "normal": "summarize the text in 50 words max.",
-    "non_technical": "make it non technical summation in max 50 words.",
+    "non_technical": "summarize in non-technical text using max of 50 words ",
     "french": "in french and in 50 words.",
+    "swedish": "in swedish, and use max 50 words",
 }
 
 
@@ -33,7 +34,7 @@ def summarize_text(article_text, prefix="normal") -> str:
         messages=[
             {
                 "role": "system",
-                "content": f"You are a creative assistant that summarizes text. The user have provided you with an additional request: {prefix}",
+                "content": f"Summarize this MIT article in a clear and simple manner suitable for a broad audience. Avoid technical jargon and keep sentences concise. Make sure a 4 year old could read and understand it.\n\n {prefix}",
             },
             {"role": "user", "content": prompt},
         ],

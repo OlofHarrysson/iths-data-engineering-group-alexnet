@@ -58,9 +58,10 @@ METADATA_FILE_PATH = os.path.join(
 def send_discord_message(webhook_url, group_name, title, summary, published_date, article_link):
     message = (
         f"**Group-name:** {group_name}\n# {title}\n"
-        f"\n\n{summary}\n\n[Article Link]({article_link})\n\n"
-        f"**Published Date:** {published_date}"
+        f"\n\n{summary}\n\n🌐 [Full Article]({article_link})\n\n"
+        f"**Published:** {published_date}\n\n"
     )
+
     embed = {"description": message, "color": 0x00FF00}
     payload = {"embeds": [embed]}
     response = requests.post(webhook_url, json=payload)
@@ -87,11 +88,10 @@ async def check_and_send():
 # asyncio loop and scheduling
 async def main():
     print("[+] Bot running")
-    while True:
-        schedule.run_pending()
-        await asyncio.sleep(1)
+    await asyncio.gather(check_and_send(), asyncio.sleep(10))  # Sleep for 180 seconds (3 minutes)
+    print("[-] Bot shutting down")
 
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(asyncio.gather(check_and_send(), main()))
+    loop.run_until_complete(main())
