@@ -75,9 +75,7 @@ def create_summary_json(input_dir, summary_type):
 
         with open(json_path, "r") as file:
             json_content = json.load(file)
-            print(json_content)
-            # Here we can call summarize_text()
-            # To avoid api-calls, this should not be done before Prompt Engineering stage has been complete
+
             blog_summary = BlogSummary(**json_content)
 
             blog_summary.summary = summarize_text(

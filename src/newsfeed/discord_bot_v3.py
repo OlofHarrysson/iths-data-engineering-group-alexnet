@@ -86,6 +86,7 @@ async def check_and_send():
 
 # asyncio loop and scheduling
 async def main():
+    print("[+] Bot running")
     while True:
         schedule.run_pending()
         await asyncio.sleep(1)
