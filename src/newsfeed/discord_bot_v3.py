@@ -32,7 +32,7 @@ import requests
 import schedule
 
 # Import functions from his script
-from summarize import get_latest_article, summarize_text
+from newsfeed.summarize import get_latest_article, summarize_text
 
 # Load key from api-key.json
 with open("api-key.json") as f:

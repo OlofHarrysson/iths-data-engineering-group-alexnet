@@ -13,13 +13,17 @@ with open("api-key.json") as f:
 
 openai.api_key = OPENAI_API_KEY["OPENAI_API_KEY"]
 
-summary_types = {"non_technical": "non technical.", "french": "in french."}
+summary_types = {
+    "normal": "summarize the text in 50 words max.",
+    "non_technical": "make it non technical summation in max 50 words.",
+    "french": "in french and in 50 words.",
+}
 
 
-def summarize_text(article_text, prefix=None) -> str:
+def summarize_text(article_text, prefix="normal") -> str:
     base_prompt = f"Summarize the following text:\n{article_text}\n"
 
-    if prefix is None:
+    if prefix is "normal":
         prompt = base_prompt + "Summary:"
     else:
         prompt = f"{prefix}, " + base_prompt + "Summary:"
@@ -127,7 +131,7 @@ def find_file(file_name, folder_path):
     return None
 
 
-def get_latest_article(blog_identifier: str = "mit", summary_type: str = None) -> tuple:
+def get_latest_article(blog_identifier: str = "mit", summary_type: str = "normal") -> tuple:
     # path to articles.
     directory_path = f"data/data_warehouse/{blog_identifier}/articles"
 
