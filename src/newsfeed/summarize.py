@@ -112,15 +112,17 @@ def open_json(filepath: str):
 
 
 def find_file(file_name, folder_path):
-    # list of files in folder.
-    file_list = os.listdir(folder_path)
 
-    # loops through the files.
-    for file in file_list:
-        # check if filename is in file.
-        if file_name in file:
-            # returns file path.
-            return os.path.join(folder_path, file)
+    if os.path.exists(folder_path):
+        # list of files in folder.
+        file_list = os.listdir(folder_path)
+
+        # loops through the files.
+        for file in file_list:
+            # check if filename is in file.
+            if file_name in file:
+                # returns file path.
+                return os.path.join(folder_path, file)
 
     # if no file was found returns none.
     return None
