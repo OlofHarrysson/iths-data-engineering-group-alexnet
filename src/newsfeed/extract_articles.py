@@ -1,4 +1,5 @@
 import argparse
+import string
 import uuid
 from datetime import datetime
 from pathlib import Path
@@ -16,9 +17,17 @@ def create_uuid_from_string(title):
     return str(uuid.uuid5(uuid.NAMESPACE_DNS, title))
 
 
+def sanitize_filename(filename):  # Required for Windows users in teams
+    # Define a string of valid characters. Add or remove as needed.
+    valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
+
+    # Replace each invalid character with an underscore
+    return "".join(c if c in valid_chars else "_" for c in filename)
+
+
 def load_metadata(blog_name):
     metadata_path = Path("data/data_lake") / blog_name / "metadata.xml"
-    with open(metadata_path) as f:
+    with open(metadata_path, encoding="utf-8") as f:
         xml_text = f.read()
 
     parsed_xml = BeautifulSoup(xml_text, "xml")
@@ -51,7 +60,8 @@ def save_articles(articles, blog_name):
     save_dir = Path("data/data_warehouse", blog_name, "articles")
     save_dir.mkdir(exist_ok=True, parents=True)
     for article in articles:
-        save_path = save_dir / article.get_filename()
+        sanitized_filename = sanitize_filename(article.get_filename())
+        save_path = save_dir / sanitized_filename
         with open(save_path, "w") as f:
             f.write(article.json(indent=2))
 

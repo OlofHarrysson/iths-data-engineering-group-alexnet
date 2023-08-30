@@ -24,7 +24,7 @@ class BlogInfo(pydantic.BaseModel):
 # Class for summary of articles in different technical levels of language
 class BlogSummary(pydantic.BaseModel):
     unique_id: str
-    summary: str
+    summary: str = None
     type_of_summary: str = "DefaultSummaryType"
 
     def get_filename(self):
