@@ -33,7 +33,7 @@ def summarize_text(article_text, prefix=None) -> str:
             },
             {"role": "user", "content": prompt},
         ],
-        max_tokens=200,
+        max_tokens=100,
     )
     summary = response.choices[0].message["content"].strip()
     return summary
@@ -168,3 +168,5 @@ def get_latest_article(blog_identifier: str = "mit", summary_type: str = None) -
         summary = create_summary_json(latest_file_path, summary_type)
 
     return data["title"], summary, data["link"], latest_date
+
+get_latest_article(summary_type="non_technical")
