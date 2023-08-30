@@ -33,7 +33,7 @@ def summarize_text(article_text, prefix=None) -> str:
             },
             {"role": "user", "content": prompt},
         ],
-        max_tokens=100,
+        max_tokens=200,
     )
     summary = response.choices[0].message["content"].strip()
     return summary
@@ -112,7 +112,6 @@ def open_json(filepath: str):
 
 
 def find_file(file_name, folder_path):
-
     if os.path.exists(folder_path):
         # list of files in folder.
         file_list = os.listdir(folder_path)
@@ -138,6 +137,8 @@ def get_latest_article(blog_identifier: str = "mit", summary_type: str = None) -
     latest_date = None
     latest_id = None
     latest_file_path = None
+    latest_title = None
+    latest_link = None
 
     # Iterates through the list of json files.
     for article in article_list:
@@ -154,6 +155,8 @@ def get_latest_article(blog_identifier: str = "mit", summary_type: str = None) -
             latest_date = article_date
             latest_id = data["unique_id"]
             latest_file_path = file_path
+            latest_title = data["title"]
+            latest_link = data["link"]
 
     # path to summary file.
     summary_file = find_file(
@@ -169,6 +172,4 @@ def get_latest_article(blog_identifier: str = "mit", summary_type: str = None) -
         print("found no file, creating one!")
         summary = create_summary_json(latest_file_path, summary_type)
 
-    return data["title"], summary, data["link"], latest_date
-
-get_latest_article(summary_type="non_technical")
+    return latest_title, summary, latest_link, latest_date
