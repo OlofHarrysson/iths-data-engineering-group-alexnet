@@ -1,3 +1,4 @@
+import datetime as dt
 import json
 import os
 from pathlib import Path
@@ -66,7 +67,6 @@ def create_summary_json(input_dir, summary_type):
     existing_outputs = set(os.listdir(get_save_path(input_dir)))
 
     # Iterate through input directory
-
     if input_dir.endswith(".json"):
         json_path = input_dir
 
@@ -92,5 +92,73 @@ def create_summary_json(input_dir, summary_type):
                 with open(new_json_path, "w") as new_file:
                     json.dump(blog_summary.dict(), new_file, indent=4)
                 existing_outputs.add(sum_file)
+
+                return blog_summary.summary
+
             else:
                 print(f"{sum_file} already exist.")
+
+
+def open_json(filepath: str):
+    with open(filepath, "r") as file:
+        data = json.load(file)
+
+        return data
+
+
+def find_file(file_name, folder_path):
+    # list of files in folder.
+    file_list = os.listdir(folder_path)
+
+    # loops through the files.
+    for file in file_list:
+        # check if filename is in file.
+        if file_name in file:
+            # returns file path.
+            return os.path.join(folder_path, file)
+
+    # if no file was found returns none.
+    return None
+
+
+def get_latest_article(blog_identifier: str = "mit", summary_type: str = None) -> tuple:
+    directory_path = f"data/data_warehouse/{blog_identifier}/articles"
+
+    # list of json files.
+    article_list = os.listdir(directory_path)
+
+    latest_date = None
+    latest_id = None
+    latest_file_path = None
+
+    # Iterates through the list of json files.
+    for article in article_list:
+        # Gets the path of the json file.
+        file_path = os.path.join(directory_path, article)
+
+        data = open_json(file_path)
+
+        # Converts the date to date format.
+        article_date = dt.datetime.strptime(data["published"], "%Y-%m-%d")
+
+        # Checks if articles date is later than previous.
+        if latest_date is None or article_date > latest_date:
+            latest_date = article_date
+            latest_id = data["unique_id"]
+            latest_file_path = file_path
+
+    summary_file = find_file(
+        latest_id, f"data/data_warehouse/{blog_identifier}/summaries/{summary_type}"
+    )
+
+    if summary_file != None:
+        summary = open_json(summary_file)["summary"]
+
+    else:
+        print("found no file, creating one!")
+        summary = create_summary_json(latest_file_path, summary_type)
+
+    return data["title"], summary, data["link"], latest_date
+
+
+print(get_latest_article(summary_type="french"))
