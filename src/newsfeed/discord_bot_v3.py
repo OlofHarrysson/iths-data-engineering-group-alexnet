@@ -1,38 +1,52 @@
+"""
+Discord Bot for Article Summaries
+
+This script fetches article summaries and sends them to a Discord channel using a webhook. It checks for new articles, summarizes them, and sends the summaries along with relevant information to the designated channel.
+
+Imports:
+- Native to Python: asyncio, datetime, json, os, xml.etree.ElementTree as ElementTree
+- Requires Installation: requests, schedule
+- External Function: get_summary (from newsfeed.get_summary)
+
+Global Variables:
+- DISCORD_WEBHOOK_URL: Discord webhook URL for sending messages.
+- MESSAGES_LIMIT: Limit for messages sent per day.
+- METADATA_FILE_PATH: Path to the XML metadata file.
+
+Functions:
+- send_discord_message: Sends formatted messages to the Discord channel.
+- check_and_send: Checks for new articles, summarizes, and sends them to Discord.
+- main: Asynchronous loop for scheduling article checks.
+
+Usage:
+Run this script to periodically fetch article summaries and send them to Discord.
+"""
+
+# Native to Python
 import asyncio
 import datetime
 import json
 import os
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ElementTree
 
+# Requires installation
 import requests
 import schedule
 
 # Import the get_summary function
-from newsfeed import get_summary
 from newsfeed.get_summary import get_summary
 
-# imported libraries
-
-
-# Built in packages
-
-
-summary = get_summary("Explain like i'm five")  # Replace with correct summary type
-
-
-# Load keys from api-key.json
+# Load key from api-key.json
 with open("api-key.json") as f:
     keys = json.load(f)
 
-# Get the Discord webhook URL
+# Get the Discord webhook URL from api-key.json
 DISCORD_WEBHOOK_URL = keys["DISCORD_WEBHOOK_URL"]
 
-# Global variables to track the number of messages sent and the current date
-messages_sent_today = 0
-current_date = datetime.date.today()
-
-# Construct the path to the XML metadata file dynamically
-metadata_file_path = os.path.join(
+# Configuration and Global Variables
+DISCORD_WEBHOOK_URL = keys["DISCORD_WEBHOOK_URL"]
+MESSAGES_LIMIT = 3
+METADATA_FILE_PATH = os.path.join(
     os.path.expanduser("~"),
     "Desktop",
     "Github",
@@ -42,6 +56,11 @@ metadata_file_path = os.path.join(
     "mit",
     "metadata.xml",
 )
+
+# Global variables to track the number of messages sent and the current date
+messages_sent_today = 0
+current_date = datetime.date.today()
+
 
 
 # Send message to Discord with Markdown formatting
@@ -58,7 +77,6 @@ def send_discord_message(webhook_url, group_name, title, summary, published_date
     response.raise_for_status()
     messages_sent_today += 1
 
-
 # Check for new articles and send summaries
 async def check_and_send():
     global messages_sent_today, current_date
@@ -70,15 +88,15 @@ async def check_and_send():
         messages_sent_today = 0
 
     # Parse XML metadata
-    tree = ET.parse(metadata_file_path)
+    tree = ElementTree.parse(METADATA_FILE_PATH)
     root = tree.getroot()
     articles = []
 
     for item in root.findall(".//item"):
         title = item.find("title").text
         description = item.find("description").text
-        link = item.find("link").text  # Assuming link is available in metadata
-        published = item.find("pubDate").text  # Assuming published date is available
+        link = item.find("link").text
+        published = item.find("pubDate").text
         articles.append(
             {
                 "title": title,
@@ -88,9 +106,9 @@ async def check_and_send():
             }
         )
 
-    if messages_sent_today < 3:
+    if messages_sent_today < MESSAGES_LIMIT:
         for article in articles:
-            if messages_sent_today >= 3:
+            if messages_sent_today >= MESSAGES_LIMIT:
                 break
 
             summary = get_summary("Explain like i'm five")  # Replace with correct summary type
@@ -105,13 +123,11 @@ async def check_and_send():
             messages_sent_today += 1
             await asyncio.sleep(5)
 
-
 # asyncio loop and scheduling
 async def main():
     while True:
         schedule.run_pending()
         await asyncio.sleep(1)
-
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
