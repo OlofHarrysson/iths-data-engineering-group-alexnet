@@ -5,6 +5,7 @@ import requests
 
 LINK_TO_XML_FILE = {
     "mit": "https://news.mit.edu/rss/topic/artificial-intelligence2",
+    "ts": "https://blog.tensorflow.org/feeds/posts/default?alt=rss",
 }
 
 
