@@ -52,6 +52,7 @@ METADATA_FILE_PATH = os.path.join(
     "metadata.xml",
 )
 
+
 # Send message to Discord with Markdown formatting
 def send_discord_message(webhook_url, group_name, title, summary, published_date, article_link):
     message = (
@@ -63,6 +64,7 @@ def send_discord_message(webhook_url, group_name, title, summary, published_date
     payload = {"embeds": [embed]}
     response = requests.post(webhook_url, json=payload)
     response.raise_for_status()
+
 
 # Check for new articles and send summaries
 async def check_and_send():
@@ -80,11 +82,13 @@ async def check_and_send():
 
     await asyncio.sleep(5)
 
+
 # asyncio loop and scheduling
 async def main():
     while True:
         schedule.run_pending()
         await asyncio.sleep(1)
+
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
