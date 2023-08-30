@@ -45,6 +45,7 @@ def get_save_path(input_dir):
         "ts": "data/data_warehouse/ts/summaries",
     }
 
+    # check if blog is from "mit" or "ts"
     for key in root_paths:
         if key in input_dir:
             return root_paths[key]
@@ -54,6 +55,7 @@ def get_save_path(input_dir):
 
 # Generate new json files with BlogSummary class
 def create_summary_json(input_dir, summary_type):
+    # checks if type is a summary type.
     if summary_type in summary_types:
         # Create subdir for each summary type
         output_dir = os.path.join(get_save_path(input_dir), summary_type)
@@ -61,12 +63,13 @@ def create_summary_json(input_dir, summary_type):
             os.makedirs(output_dir)
 
     else:
+        # if no summary type was found.
         return "Fail"
 
     # Set to keep track of existing output files
     existing_outputs = set(os.listdir(get_save_path(input_dir)))
 
-    # Iterate through input directory
+    # checks if file is json.
     if input_dir.endswith(".json"):
         json_path = input_dir
 
@@ -93,6 +96,7 @@ def create_summary_json(input_dir, summary_type):
                     json.dump(blog_summary.dict(), new_file, indent=4)
                 existing_outputs.add(sum_file)
 
+                # returns summary text.
                 return blog_summary.summary
 
             else:
@@ -100,6 +104,7 @@ def create_summary_json(input_dir, summary_type):
 
 
 def open_json(filepath: str):
+    # opens a json file and returns
     with open(filepath, "r") as file:
         data = json.load(file)
 
@@ -122,6 +127,7 @@ def find_file(file_name, folder_path):
 
 
 def get_latest_article(blog_identifier: str = "mit", summary_type: str = None) -> tuple:
+    # path to articles.
     directory_path = f"data/data_warehouse/{blog_identifier}/articles"
 
     # list of json files.
@@ -147,18 +153,18 @@ def get_latest_article(blog_identifier: str = "mit", summary_type: str = None) -
             latest_id = data["unique_id"]
             latest_file_path = file_path
 
+    # path to summary file.
     summary_file = find_file(
         latest_id, f"data/data_warehouse/{blog_identifier}/summaries/{summary_type}"
     )
 
+    # if summary is not None get summary.
     if summary_file != None:
         summary = open_json(summary_file)["summary"]
 
+    # if None create summary.
     else:
         print("found no file, creating one!")
         summary = create_summary_json(latest_file_path, summary_type)
 
     return data["title"], summary, data["link"], latest_date
-
-
-print(get_latest_article(summary_type="french"))
