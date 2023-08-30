@@ -18,8 +18,15 @@ def test_create_uuid_from_string(input_str, expected_result):
         assert result is None
 
 
-def test_extract_articles_from_xml_no_articles():
+def test_extract_mit_articles_from_xml():
     sample_xml = "<rss><channel></channel></rss>"
     parsed_xml = BeautifulSoup(sample_xml, "xml")
-    articles = extract_articles.extract_articles_from_xml(parsed_xml)
+    articles = extract_articles.extract_mit_articles_from_xml(parsed_xml)
+    assert articles == []
+
+
+def test_extract_tensorflow_articles_from_xml():
+    sample_xml = "<rss><channel></channel></rss>"
+    parsed_xml = BeautifulSoup(sample_xml, "xml")
+    articles = extract_articles.extract_tensorflow_articles_from_xml(parsed_xml)
     assert articles == []
