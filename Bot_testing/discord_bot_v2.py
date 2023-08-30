@@ -20,8 +20,12 @@ from newsfeed.get_summary import get_summary
 summary = get_summary("Explain like i'm five")  # Replace with correct summary type
 
 
-# Discord webhook URL
-DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1144176316535541773/xbf8ien_4kcghHum5NpqH1gGWuuOJeSxfLWRAzCiMuSRIE-jI0EENx95EgMcT875LUdO"
+# Load keys from api-key.json
+with open("api-key.json") as f:
+    keys = json.load(f)
+
+# Get the Discord webhook URL
+DISCORD_WEBHOOK_URL = keys["DISCORD_WEBHOOK_URL"]
 
 # Global variables to track the number of messages sent and the current date
 messages_sent_today = 0
