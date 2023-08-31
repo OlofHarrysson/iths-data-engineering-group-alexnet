@@ -136,7 +136,7 @@ async def main():
         await asyncio.gather(*asyncio.all_tasks())
     finally:
         dot_animation_task.cancel()  # Cancel the animation task
-        print("\r[-] Bot shutting down   ", end="", flush=True)
+        print("\r[-] Bot finished ", end="", flush=True)
         await dot_animation_task  # Wait for animation to finish
         print(" ", flush=True)  # Clear the line
 
