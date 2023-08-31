@@ -53,6 +53,7 @@ METADATA_FILE_PATH = os.path.join(
     "metadata.xml",
 )
 
+
 # Animation function for the running dots
 async def animate_dots():
     messages = [
@@ -62,15 +63,16 @@ async def animate_dots():
         "[+] Bot running...",
         "[+] Bot running.. ",
         "[+] Bot running.  ",
-        "[+] Bot running   "
+        "[+] Bot running   ",
     ]
 
     while True:
         for message in messages:
             print(f"\r{message}", end="", flush=True)
             await asyncio.sleep(0.3)
-        
+
         await asyncio.sleep(0.3)
+
 
 # Send message to Discord with Markdown formatting
 def send_discord_message(webhook_url, group_name, title, summary, published_date, article_link):
@@ -84,6 +86,7 @@ def send_discord_message(webhook_url, group_name, title, summary, published_date
     payload = {"embeds": [embed]}
     response = requests.post(webhook_url, json=payload)
     response.raise_for_status()
+
 
 # Check for new articles and send summaries
 async def check_and_send():
@@ -101,6 +104,7 @@ async def check_and_send():
 
     await asyncio.sleep(5)
 
+
 # asyncio loop and scheduling
 async def main():
     dot_animation_task = asyncio.create_task(animate_dots())
@@ -108,6 +112,7 @@ async def main():
     dot_animation_task.cancel()  # Cancel the animation task
 
     print("\r[-] Bot shutting down   ", flush=True)
+
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
