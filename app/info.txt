@@ -1,7 +1,8 @@
-In root run:
-"npx create-react-app app"
-
 # You will need to have Node.js installed on your machine: https://nodejs.org/en
+
+To get dependencies (node modules), in this directory run:
+
+"npm install"
 
 Then, run:
 
