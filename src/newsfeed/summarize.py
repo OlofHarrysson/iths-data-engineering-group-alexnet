@@ -14,16 +14,10 @@ with open("api-key.json") as f:
 openai.api_key = OPENAI_API_KEY["OPENAI_API_KEY"]
 
 summary_types = {
-    "normal": "summarize the text in 50 words max.",
-    "non_technical": 
-        """summarize the article in non-technical text using max of 30 words. 
-        The text must simple enough that a 4 year old could read and understand it. 
-        People with no previous knowledge in technology needs to be able to read it. 
-        The english must be simple and plain, so that people with english as second language can understand it.
-        Include descriptions for any acronyms such as AI (Artifical Intellegence).""",
-
-    "french": "in french and in 50 words.",
-    "swedish": "in swedish, and use max 50 words",
+    "normal": "Ignore previous prompts and summarize the text in as if it was for scientists studying AI, do this using 30 words max. ",
+    "non_technical": "summarize the article in non-technical text using max of 30 words. ",
+    "french": "in french and in 30 words.",
+    "swedish": "in swedish, and use max 30 words",
 }
 
 
@@ -40,7 +34,12 @@ def summarize_text(article_text, prefix="normal") -> str:
         messages=[
             {
                 "role": "system",
-                "content": f"Summarize this MIT article in a clear and simple manner suitable for a broad audience. Avoid technical jargon and keep sentences concise. Make sure a 4 year old could read and understand it.\n\n {prefix}",
+                "content": f"""Summarize this MIT article in a clear and simple manner suitable for a broad audience. 
+                                Avoid technical jargon and keep sentences concise. Make sure a 4 year old could read and understand it.
+                                The text must simple enough that a 4 year old could read and understand it. 
+                                People with no previous knowledge in technology needs to be able to read it. 
+                                The english must be simple and plain, so that people with english as second language can understand it.
+                                Include descriptions for any acronyms such as AI (Artifical Intellegence). {prefix}""",
             },
             {"role": "user", "content": prompt},
         ],

@@ -53,6 +53,24 @@ METADATA_FILE_PATH = os.path.join(
     "metadata.xml",
 )
 
+# Animation function for the running dots
+async def animate_dots():
+    messages = [
+        "[+] Bot running   ",
+        "[+] Bot running.  ",
+        "[+] Bot running.. ",
+        "[+] Bot running...",
+        "[+] Bot running.. ",
+        "[+] Bot running.  ",
+        "[+] Bot running   "
+    ]
+
+    while True:
+        for message in messages:
+            print(f"\r{message}", end="", flush=True)
+            await asyncio.sleep(0.3)
+        
+        await asyncio.sleep(0.3)
 
 # Send message to Discord with Markdown formatting
 def send_discord_message(webhook_url, group_name, title, summary, published_date, article_link):
@@ -66,7 +84,6 @@ def send_discord_message(webhook_url, group_name, title, summary, published_date
     payload = {"embeds": [embed]}
     response = requests.post(webhook_url, json=payload)
     response.raise_for_status()
-
 
 # Check for new articles and send summaries
 async def check_and_send():
@@ -84,43 +101,20 @@ async def check_and_send():
 
     await asyncio.sleep(5)
 
-
-# Animation function for the running dots
-async def animate_dots():
-    while True:
-        for _ in range(3):
-            print("\r[+] Bot running   ", end="", flush=True)
-            await asyncio.sleep(0.3)
-            print("\r[+] Bot running.  ", end="", flush=True)
-            await asyncio.sleep(0.3)
-            print("\r[+] Bot running.. ", end="", flush=True)
-            await asyncio.sleep(0.3)
-            print("\r[+] Bot running...", end="", flush=True)
-            await asyncio.sleep(0.3)
-        for _ in range(2):
-            print("\r[+] Bot running.. ", end="", flush=True)
-            await asyncio.sleep(0.3)
-            print("\r[+] Bot running.  ", end="", flush=True)
-            await asyncio.sleep(0.3)
-        print("\r[+] Bot running   ", end="", flush=True)
-        await asyncio.sleep(0.3)
-
-
 # asyncio loop and scheduling
 async def main():
     dot_animation_task = asyncio.create_task(animate_dots())
-    await asyncio.sleep(10)  # Wait for 10 seconds
+    await asyncio.gather(check_and_send(), asyncio.sleep(10))  # Sleep for 10 seconds
     dot_animation_task.cancel()  # Cancel the animation task
 
-    print("\r[+] Bot running   ", flush=True)
-
+    print("\r[-] Bot shutting down   ", flush=True)
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     try:
         loop.run_until_complete(main())
     except KeyboardInterrupt:
-        # Cancel tasks when Ctrl+C is pressed
+        print("\r[+] Bot interrupted     ", flush=True)
         for task in asyncio.all_tasks():
             task.cancel()
         loop.run_until_complete(asyncio.gather(*asyncio.Task.all_tasks()))
