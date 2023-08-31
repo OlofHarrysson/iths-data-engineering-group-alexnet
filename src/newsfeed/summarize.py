@@ -14,11 +14,12 @@ with open("api-key.json") as f:
 openai.api_key = OPENAI_API_KEY["OPENAI_API_KEY"]
 
 summary_types = {
-    "normal": "Ignore previous prompts and summarize the text in as if it was for scientists studying AI, do this using 30 words max.",
-    "non_technical": "summarize the article in non-technical text using max of 30 words.",
+    "normal": "Ignore previous prompts and summarize the text in as if it was for scientists studying AI, do this using30 words max. ",
+    "non_technical": "summarize the article in non-technical text using max of 30 words. ",
     "french": "in french and in 30 words.",
     "swedish": "in swedish, and use max 30 words",
 }
+
 
 def summarize_text(article_text, prefix="normal") -> str:
     base_prompt = f"Summarize the following text:\n{article_text}\n"
@@ -33,7 +34,7 @@ def summarize_text(article_text, prefix="normal") -> str:
         messages=[
             {
                 "role": "system",
-                "content": f"Summarize this MIT article in a clear and simple manner suitable for a broad audience. Avoid technical jargon and keep sentences concise. Make sure a 4 year old could read and understand it. The text must simple enough that a 4 year old could read and understand it. People with no previous knowledge in technology needs to be able to read it. The english must be simple and plain, so that people with english as second language can understand it. Include descriptions for any acronyms such as AI (Artifical Intellegence). {prefix}",
+                "content": f"""Summarize this MIT article in a clear and simple manner suitable for a broad audience. Avoid technical jargon and keep sentences concise. Make sure a 4 year old could read and understand it. The text must simple enough that a 4 year old could read and understand it. People with no previous knowledge in technology needs to be able to read it. The english must be simple and plain, so that people with english as second language can understand it. Include descriptions for any acronyms such as AI (Artifical Intellegence). {prefix}""",
             },
             {"role": "user", "content": prompt},
         ],
@@ -41,6 +42,7 @@ def summarize_text(article_text, prefix="normal") -> str:
     )
     summary = response.choices[0].message["content"].strip()
     return summary
+
 
 def get_save_path(input_dir):
     root_paths = {
@@ -55,6 +57,8 @@ def get_save_path(input_dir):
 
     return "No root path found"
 
+
+# Generate new json files with BlogSummary class
 def create_summary_json(input_dir, summary_type):
     # checks if type is a summary type.
     if summary_type in summary_types:
@@ -62,6 +66,7 @@ def create_summary_json(input_dir, summary_type):
         output_dir = os.path.join(get_save_path(input_dir), summary_type)
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
+
     else:
         # if no summary type was found.
         return "Fail"
@@ -96,8 +101,10 @@ def create_summary_json(input_dir, summary_type):
 
                 # returns summary text.
                 return blog_summary.summary
+
             else:
                 print(f"{sum_file} already exist.")
+
 
 def open_json(filepath: str):
     # opens a json file and returns
@@ -105,6 +112,7 @@ def open_json(filepath: str):
         data = json.load(file)
 
         return data
+
 
 def find_file(file_name, folder_path):
     if os.path.exists(folder_path):
@@ -121,6 +129,7 @@ def find_file(file_name, folder_path):
     # if no file was found returns none.
     return None
 
+
 def get_latest_article(blog_identifier: str = "mit", summary_type: str = "normal") -> tuple:
     # path to articles.
     directory_path = f"data/data_warehouse/{blog_identifier}/articles"
@@ -136,4 +145,34 @@ def get_latest_article(blog_identifier: str = "mit", summary_type: str = "normal
 
     # Iterates through the list of json files.
     for article in article_list:
-        # Gets the path
+        # Gets the path of the json file.
+        file_path = os.path.join(directory_path, article)
+
+        data = open_json(file_path)
+
+        # Converts the date to date format.
+        article_date = dt.datetime.strptime(data["published"], "%Y-%m-%d")
+
+        # Checks if articles date is later than previous.
+        if latest_date is None or article_date > latest_date:
+            latest_date = article_date
+            latest_id = data["unique_id"]
+            latest_file_path = file_path
+            latest_title = data["title"]
+            latest_link = data["link"]
+
+    # path to summary file.
+    summary_file = find_file(
+        latest_id, f"data/data_warehouse/{blog_identifier}/summaries/{summary_type}"
+    )
+
+    # if summary is not None get summary.
+    if summary_file != None:
+        summary = open_json(summary_file)["summary"]
+
+    # if None create summary.
+    else:
+        print("found no file, creating one!")
+        summary = create_summary_json(latest_file_path, summary_type)
+
+    return latest_title, summary, latest_link, latest_date
