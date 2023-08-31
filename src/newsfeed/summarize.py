@@ -24,7 +24,7 @@ summary_types = {
 def summarize_text(article_text, prefix="normal") -> str:
     base_prompt = f"Summarize the following text:\n{article_text}\n"
 
-    if prefix is "normal":
+    if prefix == "normal":
         prompt = base_prompt + "Summary:"
     else:
         prompt = f"{prefix}, " + base_prompt + "Summary:"
