@@ -61,17 +61,18 @@ async def animate_dots():
         "[+] Bot running.  ",
         "[+] Bot running.. ",
         "[+] Bot running...",
-        "[+] Bot running.. ",
-        "[+] Bot running.  ",
         "[+] Bot running   ",
     ]
 
-    while True:
-        for message in messages:
-            print(f"\r{message}", end="", flush=True)
-            await asyncio.sleep(0.3)
+    try:
+        while True:
+            for message in messages:
+                print(f"\r{message}", end="", flush=True)
+                await asyncio.sleep(0.2)
+    except asyncio.CancelledError:
+        pass
 
-        await asyncio.sleep(0.3)
+
 
 
 # Send message to Discord with Markdown formatting
@@ -125,21 +126,25 @@ async def check_and_send():
 # asyncio loop and scheduling
 async def main():
     dot_animation_task = asyncio.create_task(animate_dots())
-    await asyncio.gather(check_and_send(), asyncio.sleep(10))  # Sleep for 10 seconds
-    dot_animation_task.cancel()  # Cancel the animation task
 
-    print("\r[-] Bot shutting down   ", flush=True)
-
+    try:
+        await asyncio.gather(check_and_send(), asyncio.sleep(10))  # Sleep for 10 seconds
+    except KeyboardInterrupt:
+        print("\r[+] Bot interrupted  ", flush=True)
+        for task in asyncio.all_tasks():
+            task.cancel()
+        await asyncio.gather(*asyncio.all_tasks())
+    finally:
+        dot_animation_task.cancel()  # Cancel the animation task
+        print("\r[-] Bot shutting down   ", end="", flush=True)
+        await dot_animation_task  # Wait for animation to finish
+        print(" ", flush=True)  # Clear the line
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     try:
         loop.run_until_complete(main())
     except KeyboardInterrupt:
-        print("\r[+] Bot interrupted     ", flush=True)
-        for task in asyncio.all_tasks():
-            task.cancel()
-        loop.run_until_complete(asyncio.gather(*asyncio.Task.all_tasks()))
+        pass
     finally:
-        print("\r[-] Bot shutting down   ", flush=True)
         loop.close()
