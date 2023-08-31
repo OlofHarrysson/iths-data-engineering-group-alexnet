@@ -88,6 +88,23 @@ def send_discord_message(webhook_url, group_name, title, summary, published_date
     response.raise_for_status()
 
 
+def add_line_breaks(text, line_length):
+    line = ""
+    lines = []
+    sentences = text.split(". ")
+
+    for sentence in sentences:
+        line += " " + sentence
+
+        # check if it should add line break.
+        if len(line.split(" ")) >= line_length or sentence == sentences[-1]:
+            lines.append(line)
+            line = ""
+
+    # returns new text with line breakes.
+    return ". \n \n".join(lines)
+
+
 # Check for new articles and send summaries
 async def check_and_send():
     # Call get_latest_article from his script
@@ -97,7 +114,7 @@ async def check_and_send():
         DISCORD_WEBHOOK_URL,
         "alexnet",
         title,
-        summary,
+        add_line_breaks(summary, 20),
         date.strftime("%Y-%m-%d"),
         link,
     )
