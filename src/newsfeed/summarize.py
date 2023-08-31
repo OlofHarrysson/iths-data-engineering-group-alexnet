@@ -15,7 +15,13 @@ openai.api_key = OPENAI_API_KEY["OPENAI_API_KEY"]
 
 summary_types = {
     "normal": "summarize the text in 50 words max.",
-    "non_technical": "summarize in non-technical text using max of 50 words ",
+    "non_technical": 
+        """summarize the article in non-technical text using max of 30 words. 
+        The text must simple enough that a 4 year old could read and understand it. 
+        People with no previous knowledge in technology needs to be able to read it. 
+        The english must be simple and plain, so that people with english as second language can understand it.
+        Include descriptions for any acronyms such as AI (Artifical Intellegence).""",
+
     "french": "in french and in 50 words.",
     "swedish": "in swedish, and use max 50 words",
 }

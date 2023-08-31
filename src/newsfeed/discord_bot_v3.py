@@ -85,13 +85,45 @@ async def check_and_send():
     await asyncio.sleep(5)
 
 
+# Animation function for the running dots
+async def animate_dots():
+    while True:
+        for _ in range(3):
+            print("\r[+] Bot running   ", end="", flush=True)
+            await asyncio.sleep(0.3)
+            print("\r[+] Bot running.  ", end="", flush=True)
+            await asyncio.sleep(0.3)
+            print("\r[+] Bot running.. ", end="", flush=True)
+            await asyncio.sleep(0.3)
+            print("\r[+] Bot running...", end="", flush=True)
+            await asyncio.sleep(0.3)
+        for _ in range(2):
+            print("\r[+] Bot running.. ", end="", flush=True)
+            await asyncio.sleep(0.3)
+            print("\r[+] Bot running.  ", end="", flush=True)
+            await asyncio.sleep(0.3)
+        print("\r[+] Bot running   ", end="", flush=True)
+        await asyncio.sleep(0.3)
+
+
 # asyncio loop and scheduling
 async def main():
-    print("[+] Bot running")
-    await asyncio.gather(check_and_send(), asyncio.sleep(10))  # Sleep for 180 seconds (3 minutes)
-    print("[-] Bot shutting down")
+    dot_animation_task = asyncio.create_task(animate_dots())
+    await asyncio.sleep(10)  # Wait for 10 seconds
+    dot_animation_task.cancel()  # Cancel the animation task
+
+    print("\r[+] Bot running   ", flush=True)
 
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    try:
+        loop.run_until_complete(main())
+    except KeyboardInterrupt:
+        # Cancel tasks when Ctrl+C is pressed
+        for task in asyncio.all_tasks():
+            task.cancel()
+        loop.run_until_complete(asyncio.gather(*asyncio.Task.all_tasks()))
+    finally:
+        print("\r[-] Bot shutting down   ", flush=True)
+        loop.close()
