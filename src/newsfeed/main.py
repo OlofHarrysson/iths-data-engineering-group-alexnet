@@ -10,7 +10,7 @@ def main(blog_name="mit"):
 
     # Refactor this?
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(asyncio.gather(bot_v3.check_and_send(), bot_v3.main()))
+    loop.run_until_complete(asyncio.gather(bot.check_and_send(), bot.main()))
 
 
 if __name__ == "__main__":
