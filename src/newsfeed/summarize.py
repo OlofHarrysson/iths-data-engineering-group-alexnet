@@ -7,12 +7,6 @@ import openai
 
 from newsfeed.datatypes import BlogSummary
 
-# Get key
-with open("api-key.json") as f:
-    OPENAI_API_KEY = json.load(f)
-
-openai.api_key = OPENAI_API_KEY["OPENAI_API_KEY"]
-
 summary_types = {
     "normal": "Ignore previous prompts and summarize the text in as if it was for scientists studying AI, do this using30 words max. ",
     "non_technical": "summarize the article in non-technical text using max of 30 words. ",
@@ -22,6 +16,12 @@ summary_types = {
 
 
 def summarize_text(article_text, prefix="normal") -> str:
+    # Get key
+    with open("api-key.json") as f:
+        OPENAI_API_KEY = json.load(f)
+
+    openai.api_key = OPENAI_API_KEY["OPENAI_API_KEY"]
+
     base_prompt = f"Summarize the following text:\n{article_text}\n"
 
     if prefix == "normal":
