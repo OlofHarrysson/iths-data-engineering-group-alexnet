@@ -39,10 +39,12 @@ def main():
 
     df = pd.DataFrame(data_list)
 
-    # print(df.columns)
+    print(df.columns)
 
     df["blog_text_length"] = df["blog_text"].apply(len)
     average_length = df["blog_text_length"].mean()
+
+    print(f"Article count: {df['unique_id'].unique}")
 
     print(f"Average length of 'blog_text': {average_length:.2f} characters")
 
