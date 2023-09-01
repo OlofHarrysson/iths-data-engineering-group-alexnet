@@ -73,8 +73,6 @@ async def animate_dots():
         pass
 
 
-
-
 # Send message to Discord with Markdown formatting
 def send_discord_message(webhook_url, group_name, title, summary, published_date, article_link):
     message = (
@@ -139,6 +137,7 @@ async def main():
         print("\r[-] Bot finished ", end="", flush=True)
         await dot_animation_task  # Wait for animation to finish
         print(" ", flush=True)  # Clear the line
+
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
