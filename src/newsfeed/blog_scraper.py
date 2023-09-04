@@ -1,5 +1,6 @@
 import json
 import os
+from datetime import datetime
 
 import requests
 from bs4 import BeautifulSoup
@@ -72,6 +73,13 @@ def get_openai_blog_articles(url="https://openai.com/blog"):
     return article_data
 
 
+def convertify_date(date_string):
+    date_object = datetime.strptime(date_string, "%b %d, %Y")
+    formatted_date = date_object.strftime("%Y-%m-%d")
+
+    return formatted_date
+
+
 # TODO: parse through BlogInfo class
 def save_articles_as_json(articles, save_path):
     os.makedirs(save_path, exist_ok=True)
@@ -81,7 +89,7 @@ def save_articles_as_json(articles, save_path):
             "unique_id": create_uuid_from_string(article["title"]),
             "title": article["title"],
             "url": article["url"],
-            "date": article["date"],
+            "published": convertify_date(article["date"]),
             "blog_text": article["blog_text"],
         }
         file_name = f"article_{i+1}.json"
