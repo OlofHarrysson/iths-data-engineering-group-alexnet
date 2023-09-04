@@ -1,3 +1,4 @@
+import datetime as dt
 import json
 import os
 from pathlib import Path
@@ -6,17 +7,24 @@ import openai
 
 from newsfeed.datatypes import BlogSummary
 
-# Get key
-with open("api-key.json") as f:
-    OPENAI_API_KEY = json.load(f)
+summary_types = {
+    "normal": "Ignore previous prompts and summarize the text in as if it was for scientists studying AI, do this using30 words max. ",
+    "non_technical": "summarize the article in non-technical text using max of 30 words. ",
+    "french": "in french and in 30 words.",
+    "swedish": "in swedish, and use max 30 words",
+}
 
-openai.api_key = OPENAI_API_KEY["OPENAI_API_KEY"]
 
+def summarize_text(article_text, prefix="normal") -> str:
+    # Get key
+    with open("api-key.json") as f:
+        OPENAI_API_KEY = json.load(f)
 
-def summarize_text(article_text, prefix=None) -> str:
+    openai.api_key = OPENAI_API_KEY["OPENAI_API_KEY"]
+
     base_prompt = f"Summarize the following text:\n{article_text}\n"
 
-    if prefix is None:
+    if prefix == "normal":
         prompt = base_prompt + "Summary:"
     else:
         prompt = f"{prefix}, " + base_prompt + "Summary:"
@@ -26,7 +34,7 @@ def summarize_text(article_text, prefix=None) -> str:
         messages=[
             {
                 "role": "system",
-                "content": f"You are a creative assistant that summarizes text. The user have provided you with an additional request: {prefix}",
+                "content": f"""Summarize this MIT article in a clear and simple manner suitable for a broad audience. Avoid technical jargon and keep sentences concise. Make sure a 4 year old could read and understand it. The text must simple enough that a 4 year old could read and understand it. People with no previous knowledge in technology needs to be able to read it. The english must be simple and plain, so that people with english as second language can understand it. Include descriptions for any acronyms such as AI (Artifical Intellegence). {prefix}""",
             },
             {"role": "user", "content": prompt},
         ],
@@ -36,68 +44,135 @@ def summarize_text(article_text, prefix=None) -> str:
     return summary
 
 
+def get_save_path(input_dir):
+    root_paths = {
+        "mit": "data/data_warehouse/mit/summaries",
+        "ts": "data/data_warehouse/ts/summaries",
+    }
+
+    # check if blog is from "mit" or "ts"
+    for key in root_paths:
+        if key in input_dir:
+            return root_paths[key]
+
+    return "No root path found"
+
+
 # Generate new json files with BlogSummary class
+def create_summary_json(input_dir, summary_type):
+    # checks if type is a summary type.
+    if summary_type in summary_types:
+        # Create subdir for each summary type
+        output_dir = os.path.join(get_save_path(input_dir), summary_type)
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
 
-
-def create_summary_json(input_dir, output_dir, summary_type):
-    # Create subdir for each summary type
-    output_dir = os.path.join(output_dir, summary_type)
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    else:
+        # if no summary type was found.
+        return "Fail"
 
     # Set to keep track of existing output files
-    existing_outputs = set(os.listdir(output_dir))
+    existing_outputs = set(os.listdir(get_save_path(input_dir)))
 
-    # Iterate through input directory
-    for filename in os.listdir(input_dir):
-        if filename.endswith(".json"):
-            json_path = os.path.join(input_dir, filename)
+    # checks if file is json.
+    if input_dir.endswith(".json"):
+        json_path = input_dir
 
-            with open(json_path, "r") as file:
-                json_content = json.load(file)
+        with open(json_path, "r") as file:
+            json_content = json.load(file)
 
-                # Here we can call summarize_text()
-                # To avoid api-calls, this should not be done before Prompt Engineering stage has been complete
-                blog_summary = BlogSummary(**json_content)
+            blog_summary = BlogSummary(**json_content)
 
-                blog_summary.summary = summarize_text(
-                    json_content["blog_text"], prefix=summary_type
-                )
+            blog_summary.summary = summarize_text(
+                json_content["blog_text"], prefix=summary_types[summary_type]
+            )
 
-                # Only static text (e.g. "English Simplified", "Swedish Technical")
-                blog_summary.type_of_summary = summary_type
+            # Only static text (e.g. "English Simplified", "Swedish Technical")
+            blog_summary.type_of_summary = summary_type
 
-                sum_file = blog_summary.get_filename()
-                new_json_path = os.path.join(output_dir, sum_file)
+            sum_file = blog_summary.get_filename()
+            new_json_path = os.path.join(get_save_path(input_dir), summary_type, sum_file)
 
-                # Check if output already exist (Or should we overwrite?)
-                if sum_file not in existing_outputs:
-                    with open(new_json_path, "w") as new_file:
-                        json.dump(blog_summary.dict(), new_file, indent=4)
-                    existing_outputs.add(sum_file)
-                else:
-                    print(f"{sum_file} already exist.")
+            # Check if output already exist (Or should we overwrite?)
+            if sum_file not in existing_outputs:
+                with open(new_json_path, "w") as new_file:
+                    json.dump(blog_summary.dict(), new_file, indent=4)
+                existing_outputs.add(sum_file)
 
+                # returns summary text.
+                return blog_summary.summary
 
-# input_dir = "data/data_warehouse/mit/articles"
-# output_dir = "data/data_warehouse/test3"
-# summary_type = "NewSummaryType"
-
-# create_summary_json(input_dir, output_dir, summary_type)
+            else:
+                print(f"{sum_file} already exist.")
 
 
-json_file_path = "data/data_warehouse/mit/articles/c709b2dc-8d59-5dce-85c6-b3642aa7c54b_Three_Spanish_MIT_physics_postdocs_receive_Botton_Foundation_fellowships.json"
+def open_json(filepath: str):
+    # opens a json file and returns
+    with open(filepath, "r") as file:
+        data = json.load(file)
 
-with open(json_file_path, "r") as file:
-    json_data = json.load(file)
+        return data
 
-blog_text = json_data["blog_text"]
 
-# print(blog_text)
+def find_file(file_name, folder_path):
+    if os.path.exists(folder_path):
+        # list of files in folder.
+        file_list = os.listdir(folder_path)
 
-create_summary_json(
-    "data/data_warehouse/mit2-test", "data/data_warehouse", "Explain like i'm five"
-)  # Test dir containing only a few articles
+        # loops through the files.
+        for file in file_list:
+            # check if filename is in file.
+            if file_name in file:
+                # returns file path.
+                return os.path.join(folder_path, file)
 
-# print(summarize_text(blog_text, prefix="With easy, simplified english"))
-# print(summarize_text(blog_text, prefix="In swedish please"))
+    # if no file was found returns none.
+    return None
+
+
+def get_latest_article(blog_identifier: str = "mit", summary_type: str = "normal") -> tuple:
+    # path to articles.
+    directory_path = f"data/data_warehouse/{blog_identifier}/articles"
+
+    # list of json files.
+    article_list = os.listdir(directory_path)
+
+    latest_date = None
+    latest_id = None
+    latest_file_path = None
+    latest_title = None
+    latest_link = None
+
+    # Iterates through the list of json files.
+    for article in article_list:
+        # Gets the path of the json file.
+        file_path = os.path.join(directory_path, article)
+
+        data = open_json(file_path)
+
+        # Converts the date to date format.
+        article_date = dt.datetime.strptime(data["published"], "%Y-%m-%d")
+
+        # Checks if articles date is later than previous.
+        if latest_date is None or article_date > latest_date:
+            latest_date = article_date
+            latest_id = data["unique_id"]
+            latest_file_path = file_path
+            latest_title = data["title"]
+            latest_link = data["link"]
+
+    # path to summary file.
+    summary_file = find_file(
+        latest_id, f"data/data_warehouse/{blog_identifier}/summaries/{summary_type}"
+    )
+
+    # if summary is not None get summary.
+    if summary_file != None:
+        summary = open_json(summary_file)["summary"]
+
+    # if None create summary.
+    else:
+        print("found no file, creating one!")
+        summary = create_summary_json(latest_file_path, summary_type)
+
+    return latest_title, summary, latest_link, latest_date
