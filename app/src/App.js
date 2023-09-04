@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import jsonData from './aggregated_articles';
 import './App.css';
 import Header from './Header';
+import ArticleCard from './articleCard'; // Import the new component
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -21,14 +22,7 @@ function App() {
 
       <div className="card-space">
         {jsonData.map((item, index) => (
-          <div className={`articles-card ${darkMode ? 'dark-mode-card' : ''}`} key={index}>
-            <h2>{item.title}</h2>
-            <p>{item.description}</p>
-            <div className="article-footer">
-            <a href={item.link}>🌐 Full Article</a>
-            <p>{item.published}</p>
-            </div>
-          </div>
+          <ArticleCard key={index} item={item} darkMode={darkMode} />
         ))}
       </div>
     </div>
