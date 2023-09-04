@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import jsonData from './aggregated_articles';
 import './App.css';
-import Header from './Header';
-import ArticleCard from './ArticleCard'; // Import the new component
+import Header from './alxHeader';
+import ArticleCard from './articleCard';
+
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
