@@ -9,19 +9,39 @@ body {
 
 /* Conatins for all article-cards */
 .card-space {
-  margin-top: 1rem;
+  margin-top: 0.66rem;
+  margin-right: 2rem;
+  margin-left: 2rem;
   display: grid;
-  gap: 20px;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1px;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+}
+
+@media (max-width: 840px) {
+  .card-space {
+    margin-right: 0rem;
+    margin-left: 0rem;
+  }
+}
+
+@media (min-width: 841px) {
+  .card-space {
+    margin-right: 4rem;
+    margin-left: 4rem;
+  }
 }
 
 .articles-card {
   background-color: #e9e9e9;
   padding-left: 1rem;
   padding-right: 0.6rem;
-  margin: 1rem;
+  padding-top: 0.1rem;
+  margin-left: 0.33rem;
+  margin-right: 0.33rem;
+  margin-top: 0rem;
+  margin-bottom: 0.66rem;
   border-left: 2px solid #41c241;
-  border-radius: 0.9rem;
+  border-radius: 0.2rem;
 }
 
 .article-footer {
