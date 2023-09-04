@@ -4,13 +4,12 @@ import './App.css';
 import Header from './alxHeader';
 import ArticleCard from './articleCard';
 
-import { toggleDarkMode } from './darkMode';
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
 
-  const handleToggleDarkMode = () => {
-    toggleDarkMode(); // Call toggleDarkMode function from darkMode.js
+  const toggleDarkMode = () => {
+    console.log('Toggle dark mode from App.js');
     setDarkMode(prevDarkMode => !prevDarkMode);
   };
 
@@ -23,7 +22,7 @@ function App() {
         ))}
       </div>
     <div className="bottom_footer">
-      <div className="dark-mode-toggle" onClick={handleToggleDarkMode}>
+      <div className="dark-mode-toggle" onClick={toggleDarkMode}>
         <span>Toggle Dark Mode</span>
     </div>
   <div className="example-text-column">
