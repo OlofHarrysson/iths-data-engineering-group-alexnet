@@ -1,13 +1,10 @@
-
-
-
 /* Light Mode Styles */
 body {
   background-color: white;
   color: black;
 }
 
-/* Conatins for all article-cards */
+/* Containers for all article-cards */
 .card-space {
   margin-top: 0.66rem;
   margin-right: 2rem;
@@ -50,6 +47,18 @@ body {
   align-items: center;
 }
 
+.article-footer a {
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  background-color: #e9e9e9;
+  border-radius: 20px;
+  border: 1px solid #ffffff;
+  text-decoration: none;
+
+}
+
 /* Dark Mode Styles */
 
 .dark-mode {
@@ -69,7 +78,13 @@ body {
 
 }
 
-/* Dark Mode Toggle Styles */
+.dark-mode .article-footer a {
+  background-color: #26272bc3;
+  border: 1px solid #02b7ff;
+
+}
+
+/* Dark Mode Toggle */
 .dark-mode-toggle {
   position: fixed;
   bottom: 3px;
