@@ -5,8 +5,10 @@
 const fs = require('fs');
 const path = require('path');
 
-const dirPath = '../data/data_warehouse/mit/articles';
+const dirPath = '../../data/data_warehouse/mit/articles';
 const jsonData = [];
+
+console.log(`Aggregating articles from ${dirPath}...`);
 
 fs.readdirSync(dirPath)
   .map((file) => {
@@ -23,4 +25,6 @@ fs.readdirSync(dirPath)
 
 // We could also put this in data_warehouse
 const generatedContent = `// File generated with app/src/generateJsonData.js\nexport default ${JSON.stringify(jsonData, null, 2)};`;
-fs.writeFileSync('./src/aggregated_articles.js', generatedContent);
+fs.writeFileSync('aggregated_articles.js', generatedContent);
+
+console.log("Done!")
