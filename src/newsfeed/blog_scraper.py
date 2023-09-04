@@ -26,7 +26,7 @@ def get_openai_blog_articles(url="https://openai.com/blog"):
 
     for article in articles:
         title_element = article.find("h3", {"class": "f-subhead-2"})  # Find the title element
-        date_element = article.find("div", {"class": "f-body-1 mt-4"})
+        date_element = soup.find("span", {"aria-hidden": "true"})
 
         if date_element:
             print(
