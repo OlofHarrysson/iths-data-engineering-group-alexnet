@@ -1,3 +1,6 @@
+import json
+import os
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -67,6 +70,25 @@ def get_openai_blog_articles(url="https://openai.com/blog"):
     return article_data
 
 
+# TODO: parse through BlogInfo class
+def save_articles_as_json(articles, save_path):
+    os.makedirs(save_path, exist_ok=True)
+
+    for i, article in enumerate(articles):
+        article_data = {
+            "title": article["title"],
+            "url": article["url"],
+            "date": article["date"],
+            "content": article["content"],
+        }
+        file_name = f"article_{i+1}.json"
+
+        file_path = os.path.join(save_path, file_name)
+        with open(file_path, "w") as json_file:
+            json.dump(article_data, json_file, indent=4)
+        print(f"Saved {file_path}")
+
+
 if __name__ == "__main__":
     articles = get_openai_blog_articles()
     print("OpenAI Blog Articles from 2023:")
@@ -77,3 +99,5 @@ if __name__ == "__main__":
             print(
                 f"{i+1}. {article['title']}\n   URL: {article['url']}\n   Date: {article['date']}\n   Content: {article['content'][:100]}..."
             )
+        save_path = "data/data_warehouse/openai/articles"
+        save_articles_as_json(articles, save_path)
