@@ -92,7 +92,7 @@ def save_articles_as_json(articles, save_path):
             "published": convertify_date(article["date"]),
             "blog_text": article["blog_text"],
         }
-        file_name = "openai_" + article_data["unique_id"]
+        file_name = "openai_" + article_data["unique_id"] + ".json"
 
         file_path = os.path.join(save_path, file_name)
         with open(file_path, "w") as json_file:
