@@ -84,24 +84,52 @@ body {
 
 }
 
-/* Dark Mode Toggle */
-.dark-mode-toggle {
+/* Updated Footer Styles */
+.bottom_footer {
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
   position: fixed;
-  bottom: 3px;
-  right: 20px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-top: 1px solid #433f3f;
+}
+
+/* Dark Mode Toggle Button Styles */
+.bottom_footer .dark-mode-toggle {
   background-color: rgba(0, 0, 0, 0.619);
-  padding: 6px 10px;
+  padding: 10px 20px;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease-in-out;
-  z-index: 1000; /* Ensure the toggle stays above other content */
 }
 
-.dark-mode-toggle:hover {
+.bottom_footer .dark-mode-toggle:hover {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-.dark-mode-toggle span {
+.bottom_footer .dark-mode-toggle span {
   color: white;
   font-size: 14px;
+}
+
+/* Example Text Div Styles */
+/* TODO: Decide what data should be displayed here */
+.example-text-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.bottom_footer .example-text {
+  margin-top: -10px;
+  margin-bottom: -10px;
+  text-align: center;
 }
