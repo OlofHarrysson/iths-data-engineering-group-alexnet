@@ -4,6 +4,8 @@ import os
 import requests
 from bs4 import BeautifulSoup
 
+from newsfeed.extract_articles import create_uuid_from_string
+
 ### Actual blog text is stored under: ui-richtext
 
 
@@ -63,7 +65,7 @@ def get_openai_blog_articles(url="https://openai.com/blog"):
                         "title": title,
                         "date": date_element.get_text().strip(),
                         "url": article_url,
-                        "content": article_content,
+                        "blog_text": article_content,
                     }
                 )
 
@@ -76,10 +78,11 @@ def save_articles_as_json(articles, save_path):
 
     for i, article in enumerate(articles):
         article_data = {
+            "unique_id": create_uuid_from_string(article["title"]),
             "title": article["title"],
             "url": article["url"],
             "date": article["date"],
-            "content": article["content"],
+            "blog_text": article["blog_text"],
         }
         file_name = f"article_{i+1}.json"
 
@@ -97,7 +100,7 @@ if __name__ == "__main__":
     else:
         for i, article in enumerate(articles):
             print(
-                f"{i+1}. {article['title']}\n   URL: {article['url']}\n   Date: {article['date']}\n   Content: {article['content'][:100]}..."
+                f"{i+1}. {article['title']}\n   URL: {article['url']}\n   Date: {article['date']}\n   Content: {article['blog_text'][:100]}..."
             )
         save_path = "data/data_warehouse/openai/articles"
         save_articles_as_json(articles, save_path)
