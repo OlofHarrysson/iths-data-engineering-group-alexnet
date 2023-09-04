@@ -1,6 +1,15 @@
-// Run in terminal with 'node generateJsonData.js'
+// Run this in terminal with 'node generateJsonData.js'
+
 // Workaround to generate js file from json files to display on dashboard
 // This will be changed in the future when we set up a proper database
+
+// IMPORTANT!
+// The 'fs' module is a built-in Node.js module and is not available in standard web browsers.
+// 'fs' is only intended for server-side file system operations!
+// If we try to use 'fs' in a browser-based JavaScript script, it won't work!!
+// So we gotta call this function somewhere else (maybe through python??), or entirely change it.
+// IF we decide to rewrite it, we could use Fetch API instead.
+// https://www.w3schools.com/jsref/api_fetch.asp
 
 const fs = require('fs');
 const path = require('path');
