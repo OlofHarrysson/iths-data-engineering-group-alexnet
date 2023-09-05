@@ -1,4 +1,4 @@
-#-e . # This installs our project "newsfeed" so we can do import newsfeed in our python code
+-e . # This installs our project "newsfeed" so we can do import newsfeed in our python code
 black
 isort
 pytest
