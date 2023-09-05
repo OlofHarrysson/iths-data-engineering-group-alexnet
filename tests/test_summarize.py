@@ -89,5 +89,8 @@ def test_open_json(temp_test_json_file):
 
 # testing test cases.
 def test_get_save_path(input_dir, expected_path):
-    save_path = get_save_path(input_dir)
-    assert save_path == expected_path
+    try:
+        save_path = get_save_path(input_dir)
+        assert save_path == expected_path
+    except ValueError as e:
+        assert str(e) == expected_path
