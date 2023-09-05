@@ -2,65 +2,84 @@ import json
 import os
 from urllib.parse import unquote
 
-from sqlalchemy import create_engine, insert, text
-from sqlalchemy.engine import URL
+from sqlalchemy import create_engine, insert
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.automap import automap_base
 
-with open("api-key.json") as file:
-    data = json.load(file)
 
-    username = data["DB_username"]
-    password = data["DB_password"]
+def get_data(path: str) -> list:
+    if os.path.isfile(path):
+        with open(path) as data:
+            return [json.load(data)]
 
-server_name = "localhost"
-database_name = "postgres"
+    if os.path.isdir(path):
+        data_list = []
 
-# postgreSQL database connection URL
-DB_URL = f"postgresql://{username}:{password}@{server_name}/{database_name}"
+        files = os.listdir(path)
 
-print("Connecting to database using URL string:")
+        for file in files:
+            with open(os.path.join(path, file)) as data:
+                data_list.append(data)
 
-try:
-    engine = create_engine(DB_URL)
-    with engine.connect() as connection:
-        print(f"Successfully connected to {database_name}!")
-except Exception as e:
-    print("Error while connecting to database:\n")
-    print(e)
+        return data_list
 
-folder_path = "data/data_warehouse/mit/articles"
+    raise ValueError(f"Error: '{path}' is not a path to a folder or file.")
 
-file_list = os.listdir(folder_path)
-print(os.path.join(folder_path, file_list[0]))
 
-Base = automap_base()
-Base.prepare(engine, reflect=True)
+def store_in_database(table_name: str, path: str = None, data: object = None):
+    data_list = []
 
-db_table = Base.classes.bloginfo
+    if path is None and data is None:
+        raise ValueError(
+            "Error no data was provided, need to provide either 'path' or 'data' object or both."
+        )
 
-with open(os.path.join(folder_path, file_list[0])) as file:
-    data = json.load(file)
+    if path != None:
+        data_list += get_data(path)
 
-    unique_id = data["unique_id"]
-    title = data["title"]
-    description = data["description"]
-    link = data["link"]
-    blog_text = data["blog_text"]
-    published = data["published"]
-    timestamp = data["timestamp"]
+    if data != None:
+        data_list.append[data]
 
-query = insert(db_table).values(
-    unique_id=unique_id,
-    title=title,
-    description=description,
-    link=link,
-    blog_text=blog_text,
-    published=published,
-    timestamp=timestamp,
+    with open("api-key.json") as file:
+        data = json.load(file)
+
+        username = data["DB_username"]
+        password = data["DB_password"]
+
+    server_name = "localhost"
+    database_name = "postgres"
+
+    # postgreSQL database connection URL
+    DB_URL = f"postgresql://{username}:{password}@{server_name}/{database_name}"
+
+    print("Connecting to database using URL string:")
+
+    try:
+        engine = create_engine(DB_URL)
+        with engine.connect() as connection:
+            print(f"Successfully connected to {database_name}!")
+    except Exception as e:
+        print("Error while connecting to database:\n")
+        print(e)
+
+    Base = automap_base()
+    Base.prepare(engine, reflect=True)
+
+    db_table = Base.classes.get(table_name)
+
+    for item in data_list:
+        query = insert(db_table).values(**item)
+
+        with engine.connect() as conn:
+            try:
+                result = conn.execute(query)
+                conn.commit()
+            except IntegrityError as e:
+                print(f"Error: {e}. Skipping duplicate row with ID {item['unique_id']}.")
+                conn.rollback()  # Rollback the transaction to keep the database in a consistent state
+
+
+store_in_database(
+    "bloginfo",
+    path="data/data_warehouse/mit/articles/26609bc3-35e4-53aa-aa63-e6f9e2456422_Bringing_the_social_and_ethical_responsibilities_of_computing_to_the_forefront.json",
 )
-
-# compiled = query.compile()
-
-with engine.connect() as conn:
-    result = conn.execute(query)
-    conn.commit()
