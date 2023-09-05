@@ -44,6 +44,26 @@ def summarize_text(article_text, prefix="normal") -> str:
     return summary
 
 
+def translate_title(title, type):
+    # prompt / context to chat gpt.
+    conversation = [
+        {"role": "system", "content": "You are a helpful assistant that translates titles."},
+        {
+            "role": "user",
+            "content": f"Translate the following title from English to {type}: {title}",
+        },
+    ]
+
+    # the response from chat gpt.
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo", messages=conversation, max_tokens=50
+    )
+
+    # gets the title from the response.
+    translated_title = response["choices"][0]["message"]["content"].strip()
+    return translated_title
+
+
 def get_save_path(input_dir):
     root_paths = {
         "mit": "data/data_warehouse/mit/summaries",
@@ -87,6 +107,10 @@ def create_summary_json(input_dir, summary_type):
                 json_content["blog_text"], prefix=summary_types[summary_type]
             )
 
+            # checks if it should translate the title.
+            if summary_type not in ["normal", "non_technical"]:
+                blog_summary.translated_title = translate_title(json_content["title"], summary_type)
+
             # Only static text (e.g. "English Simplified", "Swedish Technical")
             blog_summary.type_of_summary = summary_type
 
@@ -100,7 +124,7 @@ def create_summary_json(input_dir, summary_type):
                 existing_outputs.add(sum_file)
 
                 # returns summary text.
-                return blog_summary.summary
+                return blog_summary.summary, blog_summary.translated_title
 
             else:
                 print(f"{sum_file} already exist.")
@@ -168,11 +192,20 @@ def get_latest_article(blog_identifier: str = "mit", summary_type: str = "normal
 
     # if summary is not None get summary.
     if summary_file != None:
-        summary = open_json(summary_file)["summary"]
+        data = open_json(summary_file)
+        summary = data["summary"]
+
+        # checks if a translated title exist.
+        if data["translated_title"] != None:
+            latest_title = data["translated_title"]
 
     # if None create summary.
     else:
         print("found no file, creating one!")
-        summary = create_summary_json(latest_file_path, summary_type)
+        summary, translated_title = create_summary_json(latest_file_path, summary_type)
+
+        # checks if a translated title exist.
+        if translated_title != None:
+            latest_title = translated_title
 
     return latest_title, summary, latest_link, latest_date
