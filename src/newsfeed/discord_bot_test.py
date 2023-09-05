@@ -1,3 +1,5 @@
+# for testing new stuff before implenting into the main bot, right now it attempts to solve the storage of previous articles and giving the user ability to retreive them.
+
 import asyncio
 import json
 
@@ -10,7 +12,7 @@ intents.typing = False
 intents.presences = False
 intents.message_content = True  # Enable message content intent
 
-from newsfeed.summarize import get_latest_article, summarize_text, summary_types
+from newsfeed.summarize import get_latest_article, summary_types
 
 
 # Define a custom help command class
@@ -55,6 +57,9 @@ class CustomHelpCommand(commands.HelpCommand):
 # Define the bot with the specified intents and custom help command
 bot = commands.Bot(command_prefix="!", intents=intents, help_command=CustomHelpCommand())
 
+# Global variables for storing the latest articles
+latest_articles = []
+
 
 # Event handler for when the bot is ready
 @bot.event
@@ -97,11 +102,11 @@ async def send_message_description(ctx):
 
 
 @bot.command()
-async def summary(ctx, summary_type: str):
+async def summary(ctx, summary_type: str, language: str = "english"):
     """
     Sends a summary of the latest article via DM.
-    Usage: !summary [summary_type]
-    Example: !summary non_technical
+    Usage: !summary [summary_type] [language]
+    Example: !summary non_technical swedish
     """
     if summary_type in summary_types:
         latest_title, summary, latest_link, latest_date = get_latest_article(
@@ -110,6 +115,10 @@ async def summary(ctx, summary_type: str):
         await ctx.author.send(
             f"Summary Type: {summary_type}\nTitle: {latest_title}\nSummary: {summary}\nLink: {latest_link}\nDate: {latest_date}"
         )
+
+        # Store the latest article
+        latest_articles.append((latest_title, summary, latest_link, latest_date))
+
         await ctx.send(f"Summary sent via DM! Check your messages.")
     else:
         await ctx.send(
@@ -117,27 +126,35 @@ async def summary(ctx, summary_type: str):
         )
 
 
-# Command to shut down the bot
 @bot.command()
-async def shutdown(ctx):
+async def get_latest(ctx):
     """
-    Shuts down the bot after a 10-second delay.
+    Get the latest article summary.
+    Usage: !get_latest
     """
-    if ctx.author.id == 222845856540393482:  # Replace YOUR_USER_ID with Discord user Admins ID
-        await ctx.send("Shutting down the bot in 10 seconds. Goodbye!")
+    if latest_articles:
+        latest_title, latest_summary, latest_link, latest_date = latest_articles[-1]
+        await ctx.send(
+            f"Latest Article:\nTitle: {latest_title}\nSummary: {latest_summary}\nLink: {latest_link}\nDate: {latest_date}"
+        )
+    else:
+        await ctx.send("No latest articles available.")
 
-        # Delay the shutdown for 10 seconds
-        await asyncio.sleep(10)
 
-        # Close the bot
-        await bot.close()
-
-
-# Error handler for CommandNotFound
-@bot.event
-async def on_command_error(ctx, error):
-    if isinstance(error, commands.CommandNotFound):
-        await ctx.send("Invalid command. Type !help to see a list of available commands.")
+@bot.command()
+async def get_previous(ctx, index: int = 1):
+    """
+    Get a previous article summary by index.
+    Usage: !get_previous [index]
+    Example: !get_previous 2
+    """
+    if index > 0 and index <= len(latest_articles):
+        previous_title, previous_summary, previous_link, previous_date = latest_articles[-index]
+        await ctx.send(
+            f"Previous Article {index}:\nTitle: {previous_title}\nSummary: {previous_summary}\nLink: {previous_link}\nDate: {previous_date}"
+        )
+    else:
+        await ctx.send("Invalid index or no previous articles available.")
 
 
 # Load key from api-key.json
@@ -146,13 +163,3 @@ with open("api-key.json") as f:
 
 # Run the bot with your bot token
 bot.run(keys["DISCORD_TOKEN"])  # Use the token loaded from the JSON file
-
-
-if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    try:
-        loop.run_until_complete(main())
-    except KeyboardInterrupt:
-        pass
-    finally:
-        loop.close()
