@@ -1,154 +1,152 @@
-"""
-Automated Article Summary Discord Bot
-
-This script automates the process of fetching article summaries and broadcasting them to a Discord channel via a webhook. It constantly monitors for new articles, generates concise summaries, and transmits the summaries along with relevant details to the specified channel.
-
-Imports:
-- Standard Python Libraries: asyncio, json, os, requests, xml.etree.ElementTree as ElementTree
-- Required External Package: schedule
-- External Function: get_latest_article (imported from a friend's script)
-
-Global Variables:
-- DISCORD_WEBHOOK_URL: URL of the Discord webhook for message delivery.
-- METADATA_FILE_PATH: Path to the XML metadata file.
-
-Functions:
-- send_discord_message: Formats and sends messages to the designated Discord channel.
-- check_and_send: Scans for recent articles, summarizes them, and forwards to Discord.
-- main: Asynchronous loop for scheduling periodic article checks.
-
-Usage:
-Execute this script to automatically collect article summaries and broadcast them on Discord.
-
-"""
-
-# Native to Python
 import asyncio
 import json
-import os
-import xml.etree.ElementTree as ElementTree
 
 import discord
-import requests
-import schedule
+from discord.ext import commands
 
-# Import functions from his script
-from newsfeed.summarize import get_latest_article, summarize_text
+# Define the bot's intents
+intents = discord.Intents.default()
+intents.typing = False
+intents.presences = False
+intents.message_content = True  # Enable message content intent
+
+from newsfeed.summarize import get_latest_article, summarize_text, summary_types
+
+
+# Define a custom help command class
+class CustomHelpCommand(commands.HelpCommand):
+    # This method sends a list of available commands and their short descriptions when users run !help
+
+    async def send_bot_help(self, mapping):
+        embed = discord.Embed(
+            title="Bot Commands",
+            description="Here's a list of available commands and their short descriptions:",
+            color=discord.Color.blue(),
+        )
+
+        # Create a list of commands and their short descriptions
+        command_list = [
+            f"`{command.name}`: {command.short_doc}"
+            for command in self.context.bot.commands
+            if command.short_doc
+        ]
+
+        # Add the list to the embed
+        embed.add_field(name="Commands", value="\n".join(command_list), inline=False)
+
+        await self.get_destination().send(embed=embed)
+
+        # You can also add additional information here if needed
+        await self.get_destination().send(
+            "For more details on a specific command, use `!help [command]`."
+        )
+
+    async def send_cog_help(self, cog):
+        pass
+
+    # This method sends a detailed explanation of a specific command when users run !help [command]
+    async def send_command_help(self, command):
+        embed = discord.Embed(
+            title=f"Command: {command.name}", description=command.help, color=discord.Color.green()
+        )
+        await self.get_destination().send(embed=embed)
+
+
+# Define the bot with the specified intents and custom help command
+bot = commands.Bot(command_prefix="!", intents=intents, help_command=CustomHelpCommand())
+
+
+# Event handler for when the bot is ready
+@bot.event
+async def on_ready():
+    print(f"Logged in as {bot.user.name}")
+    print("------")
+
+
+# Command to send a private message to the bot
+@bot.command()
+async def send_dm(ctx, *, message):
+    # Get the author of the message (the user who sent the command)
+    user = ctx.author
+
+    # Send a DM to the user with the provided message
+    await user.send(f"You sent the following message to the bot: {message}")
+
+
+# Command to send a message
+@bot.command()
+async def send_message(ctx):
+    """
+    Sends a hello message to a channel.
+    """
+    # Replace 'your_channel_id' with the actual channel ID where you want to send the message
+    channel = bot.get_channel(1148542025491288095)
+
+    # Send a message to the specified channel
+    await channel.send("Hello World")
+    print("Command executed: !send_message")
+
+
+# Command to provide a more detailed explanation for the send_message command
+@bot.command()
+async def send_message_description(ctx):
+    """
+    Provides a more detailed explanation for the send_message command.
+    """
+    await ctx.send("This command sends a hello message to a channel.")
+
+
+@bot.command()
+async def summary(ctx, summary_type: str):
+    """
+    Sends a summary of the latest article via DM.
+    Usage: !summary [summary_type]
+    Example: !summary non_technical
+    """
+    if summary_type in summary_types:
+        latest_title, summary, latest_link, latest_date = get_latest_article(
+            blog_identifier="mit", summary_type=summary_type
+        )
+        await ctx.author.send(
+            f"Summary Type: {summary_type}\nTitle: {latest_title}\nSummary: {summary}\nLink: {latest_link}\nDate: {latest_date}"
+        )
+        await ctx.send(f"Summary sent via DM! Check your messages.")
+    else:
+        await ctx.send(
+            "Invalid summary type. Supported types: normal, non_technical, swedish, french"
+        )
+
+
+# Command to shut down the bot
+@bot.command()
+async def shutdown(ctx):
+    """
+    Shuts down the bot after a 10-second delay.
+    """
+    if ctx.author.id == 222845856540393482:  # Replace YOUR_USER_ID with Discord user Admins ID
+        await ctx.send("Shutting down the bot in 10 seconds. Goodbye!")
+
+        # Delay the shutdown for 10 seconds
+        await asyncio.sleep(10)
+
+        # Close the bot
+        await bot.close()
+
+
+# Error handler for CommandNotFound
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound):
+        await ctx.send("Invalid command. Type !help to see a list of available commands.")
+
 
 # Load key from api-key.json
 with open("api-key.json") as f:
     keys = json.load(f)
 
-# Get the Discord webhook URL from api-key.json
-DISCORD_WEBHOOK_URL = keys["DISCORD_WEBHOOK_URL"]
+# Run the bot with your bot token
+bot.run(keys["DISCORD_TOKEN"])  # Use the token loaded from the JSON file
 
-
-# Animation function for the running dots
-async def animate_dots():
-    messages = [
-        "[+] Bot running   ",
-        "[+] Bot running.  ",
-        "[+] Bot running.. ",
-        "[+] Bot running...",
-        "[+] Bot running   ",
-    ]
-
-    try:
-        while True:
-            for message in messages:
-                print(f"\r{message}", end="", flush=True)
-                await asyncio.sleep(0.2)
-    except asyncio.CancelledError:
-        pass
-
-
-# Send message to Discord with Markdown formatting
-def send_discord_message(webhook_url, group_name, title, summary, published_date, article_link):
-    message = (
-        f"**Group-name:** {group_name}\n# {title}\n"
-        f"\n\n{summary}\n\n🌐 [Full Article]({article_link})\n\n"
-        f"**Published:** {published_date}\n\n"
-    )
-
-    embed = {"description": message, "color": 0x00FF00}
-    payload = {"embeds": [embed]}
-    response = requests.post(webhook_url, json=payload)
-    response.raise_for_status()
-
-
-def add_line_breaks(text, line_length):
-    line = ""
-    lines = []
-    sentences = text.split(". ")
-
-    for sentence in sentences:
-        line += " " + sentence
-
-        # check if it should add line break.
-        if len(line.split(" ")) >= line_length or sentence == sentences[-1]:
-            lines.append(line)
-            line = ""
-
-    # returns new text with line breakes.
-    return ". \n \n".join(lines)
-
-
-# Check for new articles and send summaries
-async def check_and_send():
-    # Call get_latest_article from his script
-    title, summary, link, date = get_latest_article(summary_type="non_technical")
-
-    send_discord_message(
-        DISCORD_WEBHOOK_URL,
-        "alexnet",
-        title,
-        add_line_breaks(summary, 20),
-        date.strftime("%Y-%m-%d"),
-        link,
-    )
-
-    await asyncio.sleep(5)
-
-
-# asyncio loop and scheduling
-async def main():
-    dot_animation_task = asyncio.create_task(animate_dots())
-
-    try:
-        await asyncio.gather(check_and_send(), asyncio.sleep(10))  # Sleep for 10 seconds
-    except KeyboardInterrupt:
-        print("\r[+] Bot interrupted  ", flush=True)
-        for task in asyncio.all_tasks():
-            task.cancel()
-        await asyncio.gather(*asyncio.all_tasks())
-    finally:
-        dot_animation_task.cancel()  # Cancel the animation task
-        print("\r[-] Bot finished ", end="", flush=True)
-        await dot_animation_task  # Wait for animation to finish
-        print(" ", flush=True)  # Clear the line
-
-
-# discord bot prompts
-from discord.ext import commands
-
-# Define the intents variable here
-intents = discord.Intents.default()
-
-# Create a Discord bot instance with a command prefix '!' and the specified intents
-bot = commands.Bot(command_prefix="!", intents=intents)
-
-# main file
-if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    try:
-        loop.run_until_complete(main())
-    except KeyboardInterrupt:
-        pass
-    finally:
-        loop.close()
-
-
-# main file
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
