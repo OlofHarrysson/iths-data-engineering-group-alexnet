@@ -75,7 +75,7 @@ def get_save_path(input_dir):
         if key in input_dir:
             return root_paths[key]
 
-    raise "No root path found"
+    raise ValueError("No root path found")
 
 
 # Generate new json files with BlogSummary class
@@ -84,7 +84,7 @@ def create_summary_json(input_dir, summary_type):
     if summary_type in summary_types:
         # makes it so it can only translate "mit" blogs to swedish.
         if summary_type == "swedish" and "mit" not in input_dir:
-            raise "Error: Can only translate 'Mit' blogs to Swedish."
+            raise ValueError("Error: Can only translate 'Mit' blogs to Swedish.")
 
         # Create subdir for each summary type
         output_dir = os.path.join(get_save_path(input_dir), summary_type)
