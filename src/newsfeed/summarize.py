@@ -177,6 +177,3 @@ def get_latest_article(blog_identifier: str = "mit", summary_type: str = "normal
         summary = create_summary_json(latest_file_path, summary_type)
 
     return latest_title, summary, latest_link, latest_date
-
-
-get_latest_article("openai", "normal")
