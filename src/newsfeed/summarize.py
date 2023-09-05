@@ -48,6 +48,7 @@ def get_save_path(input_dir):
     root_paths = {
         "mit": "data/data_warehouse/mit/summaries",
         "ts": "data/data_warehouse/ts/summaries",
+        "openai": "data/data_warehouse/openai/summaries",
     }
 
     # check if blog is from "mit" or "ts"
@@ -176,3 +177,6 @@ def get_latest_article(blog_identifier: str = "mit", summary_type: str = "normal
         summary = create_summary_json(latest_file_path, summary_type)
 
     return latest_title, summary, latest_link, latest_date
+
+
+get_latest_article("openai", "normal")

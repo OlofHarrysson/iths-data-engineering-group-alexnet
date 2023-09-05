@@ -5,17 +5,18 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 
+from newsfeed.datatypes import BlogInfo
 from newsfeed.extract_articles import create_uuid_from_string
 
 ### Actual blog text is stored under: ui-richtext
 
 
-def get_openai_blog_articles(url="https://openai.com/blog"):
-    response = requests.get(url)
+def get_openai_blog_articles(link="https://openai.com/blog"):
+    response = requests.get(link)
 
     # Check if the request was successful
     if response.status_code != 200:
-        print(f"Failed to get data from {url}")
+        print(f"Failed to get data from {link}")
         return []
 
     soup = BeautifulSoup(response.text, "html.parser")  # Parse the HTML as a string
@@ -40,17 +41,23 @@ def get_openai_blog_articles(url="https://openai.com/blog"):
         if date_element and "2023" in date_element.get_text().strip():
             if title_element:
                 title = title_element.get_text()
-                article_url = "https://openai.com" + article["href"]
+                article_link = "https://openai.com" + article["href"]
 
-                print(f"Fetching article: {title}, URL: {article_url}")
+                print(f"Fetching article: {title}, link: {article_link}")
 
                 # Fetch the article
-                article_response = requests.get(article_url)
+                article_response = requests.get(article_link)
                 article_soup = BeautifulSoup(article_response.text, "html.parser")
 
+                # Now look for the description element
+                description_element = article_soup.find("div", {"class": "ui-richtext"})
+                if description_element:
+                    print(f"Found description: {description_element.get_text().strip()}")
+                else:
+                    print("No description found.")
                 # Find the article text
                 article_text_elements = article_soup.find_all("div", {"class": "ui-richtext"})
-
+                description = description_element.get_text().strip()
                 article_texts = []
                 for article_text_element in article_text_elements:
                     paragraphs = article_text_element.find_all("p")
@@ -61,14 +68,20 @@ def get_openai_blog_articles(url="https://openai.com/blog"):
 
                 article_content = " ".join(article_texts)  # Join the paragraphs together
 
-                article_data.append(
-                    {
-                        "title": title,
-                        "date": date_element.get_text().strip(),
-                        "url": article_url,
-                        "blog_text": article_content,
-                    }
+                # Create an object of BlogInfo
+                blog_info = BlogInfo(
+                    unique_id=create_uuid_from_string(title),
+                    title=title,
+                    description=description,
+                    link=article_link,
+                    blog_text=article_content,
+                    published=datetime.strptime(
+                        date_element.get_text().strip(), "%b %d, %Y"
+                    ).date(),
+                    timestamp=datetime.now(),
                 )
+
+                article_data.append(blog_info)
 
     return article_data
 
@@ -80,21 +93,16 @@ def convertify_date(date_string):
     return formatted_date
 
 
-# TODO: parse through BlogInfo class
 def save_articles_as_json(articles, save_path):
     os.makedirs(save_path, exist_ok=True)
 
     for i, article in enumerate(articles):
-        article_data = {
-            "unique_id": create_uuid_from_string(article["title"]),
-            "title": article["title"],
-            "url": article["url"],
-            "published": convertify_date(article["date"]),
-            "blog_text": article["blog_text"],
-        }
-        file_name = "openai_" + article_data["unique_id"] + ".json"
+        # Serialize the BlogInfo object to JSON
+        article_data = json.loads(article.json())
 
+        file_name = article.get_filename()
         file_path = os.path.join(save_path, file_name)
+
         with open(file_path, "w") as json_file:
             json.dump(article_data, json_file, indent=4)
         print(f"Saved {file_path}")
@@ -103,12 +111,19 @@ def save_articles_as_json(articles, save_path):
 if __name__ == "__main__":
     articles = get_openai_blog_articles()
     print("OpenAI Blog Articles from 2023:")
+
     if not articles:
         print("No articles from 2023 found.")
     else:
         for i, article in enumerate(articles):
             print(
-                f"{i+1}. {article['title']}\n   URL: {article['url']}\n   Date: {article['date']}\n   Content: {article['blog_text'][:100]}..."
+                f"{i+1}. {article.title}\n   Link: {article.link}\n   Date: {article.published}\n   Content: {article.blog_text[:10]}..."
             )
+
         save_path = "data/data_warehouse/openai/articles"
         save_articles_as_json(articles, save_path)
+
+
+## Todo,
+# 1. Fix so that everything works through main
+# 2. Fix so that BlogInfo class is used within blog_scraper.py
