@@ -27,6 +27,7 @@ import asyncio
 import json
 import os
 import xml.etree.ElementTree as ElementTree
+
 import discord
 import requests
 import schedule
@@ -126,6 +127,7 @@ async def main():
         await dot_animation_task  # Wait for animation to finish
         print(" ", flush=True)  # Clear the line
 
+
 # discord bot prompts
 from discord.ext import commands
 
@@ -133,7 +135,7 @@ from discord.ext import commands
 intents = discord.Intents.default()
 
 # Create a Discord bot instance with a command prefix '!' and the specified intents
-bot = commands.Bot(command_prefix='!', intents=intents)
+bot = commands.Bot(command_prefix="!", intents=intents)
 
 # main file
 if __name__ == "__main__":
@@ -144,17 +146,6 @@ if __name__ == "__main__":
         pass
     finally:
         loop.close()
-
-
-
-
-
-
-
-
-
-
-
 
 
 # main file
