@@ -10,7 +10,6 @@ COPY requirements.txt /alexnet/
 
 # Install any needed packages specified in requirements.txt
 RUN pip install -r requirements.txt
-RUN pip -e
 
 # CI/CD HERE
 
