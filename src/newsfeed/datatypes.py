@@ -24,6 +24,7 @@ class BlogInfo(pydantic.BaseModel):
 # Class for summary of articles in different technical levels of language
 class BlogSummary(pydantic.BaseModel):
     unique_id: str
+    translated_title: str = None
     summary: str = None
     type_of_summary: str = "DefaultSummaryType"
 
