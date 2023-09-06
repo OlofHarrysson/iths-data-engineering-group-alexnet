@@ -79,23 +79,23 @@ def store_in_database(path: str = None, data: [] = None):
         with engine.connect() as conn:
             try:
                 result = conn.execute(query)
-                parse_summary(item, summary_table)
                 conn.commit()
+                parse_summary(item, summary_table)
             except IntegrityError as e:
                 print(f"Error: {e}. Skipping duplicate row with ID {item['unique_id']}.")
                 conn.rollback()  # Rollback the transaction to keep the database in a consistent state
 
 
-def parse_summary(article: object, summary_table: str):
+def parse_summary(article: object, summary_table_name: str):
     summary_list = []
 
-    summary_tabel = Base.classes.get(summary_tabel)
+    summary_table = Base.classes.get(summary_table_name)
 
     for key in summary_types:
-        if article.blog_name != "mit" and key == "swedish":
+        if article["blog_name"] != "mit" and key == "swedish":
             pass
 
-        blog_summary = BlogSummary(**article)
+        blog_summary = BlogSummary(unique_id=article["unique_id"])
 
         blog_summary.summary = summarize_text(article["blog_text"], suffix=summary_types[key])
 
@@ -106,17 +106,19 @@ def parse_summary(article: object, summary_table: str):
         # Only static text (e.g. "English Simplified", "Swedish Technical")
         blog_summary.type_of_summary = key
 
-        summary_list.append(blog_summary)
-
-    with engine.connect() as conn:
-        for summary in summary_list:
-            query = insert(summary_table).values(**summary)
+        with engine.connect() as conn:
+            query = insert(summary_table).values(
+                unique_id=blog_summary["unique_id"],
+                translated_title=blog_summary["translated_title"],
+                summary=blog_summary["summary"],
+                type_of_summary=blog_summary["type_of_summary"],
+            )
 
             try:
                 result = conn.execute(query)
                 conn.commit()
             except IntegrityError as e:
-                print(f"Error: {e}. Skipping duplicate row with ID {summary['unique_id']}.")
+                print(f"Error: {e}. Skipping duplicate row with ID {blog_summary['unique_id']}.")
                 conn.rollback()  # Rollback the transaction to keep the database in a consistent state
 
 
