@@ -22,6 +22,7 @@ def test_blogInfo_get_filename(unique_id, title, expected_filename):
         description="Sample Description",
         link="https://example.com",
         blog_text="This is a sample blog text.",
+        blog_name="This is a sample blog name",
         published=datetime.date(2023, 8, 31),
         timestamp=datetime.datetime(2023, 8, 31, 12, 0, 0),
     )
