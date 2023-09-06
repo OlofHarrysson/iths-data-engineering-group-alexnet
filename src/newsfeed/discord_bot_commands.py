@@ -33,6 +33,10 @@ import json
 import discord
 from discord.ext import commands
 
+# Load key from api-key.json
+with open("api-key.json") as f:
+    keys = json.load(f)
+
 # Define the bot's intents
 intents = discord.Intents.default()
 intents.typing = False
@@ -153,7 +157,7 @@ async def shutdown(ctx):
     """
     Shuts down the bot after a 10-second delay.
     """
-    if ctx.author.id == 222845856540393482:  # Replace YOUR_USER_ID with Discord user Admins ID
+    if ctx.author.id == keys["DISCORD_ADMIN"]:  # Replace YOUR_USER_ID with Discord user Admins ID
         await ctx.send("Shutting down the bot in 10 seconds. Goodbye!")
 
         # Delay the shutdown for 10 seconds
@@ -169,10 +173,6 @@ async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         await ctx.send("Invalid command. Type !help to see a list of available commands.")
 
-
-# Load key from api-key.json
-with open("api-key.json") as f:
-    keys = json.load(f)
 
 # Run the bot with your bot token
 bot.run(keys["DISCORD_TOKEN"])  # Use the token loaded from the JSON file
