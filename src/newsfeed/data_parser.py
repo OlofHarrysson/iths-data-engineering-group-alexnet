@@ -19,7 +19,7 @@ def get_data(path: str) -> list:
 
         for file in files:
             with open(os.path.join(path, file)) as data:
-                data_list.append(data)
+                data_list.append(json.load(data))
 
         return data_list
 
@@ -36,6 +36,7 @@ def store_in_database(table_name: str, path: str = None, data: object = None):
 
     if path != None:
         data_list += get_data(path)
+        print(data_list)
 
     if data != None:
         data_list.append[data]
@@ -80,6 +81,6 @@ def store_in_database(table_name: str, path: str = None, data: object = None):
 
 
 store_in_database(
-    "bloginfo",
-    path="data/data_warehouse/mit/articles/26609bc3-35e4-53aa-aa63-e6f9e2456422_Bringing_the_social_and_ethical_responsibilities_of_computing_to_the_forefront.json",
+    "blog_summaries",
+    path="data/data_warehouse/mit/summaries/french/a57cdb59-4cac-5ad7-ba41-f437d528ee28_french.json",
 )

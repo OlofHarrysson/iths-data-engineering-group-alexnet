@@ -11,6 +11,7 @@ class BlogInfo(pydantic.BaseModel):
     description: str
     link: str
     blog_text: str
+    blog: str
     published: date
     timestamp: datetime
 
