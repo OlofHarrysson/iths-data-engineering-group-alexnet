@@ -13,4 +13,4 @@ openai
 schedule
 discord
 sqlalchemy
-psycopb2-binary
+psycopg2-binary
