@@ -158,3 +158,6 @@ app/node_modules
 Pipfile.lock
 Pipfile
 app/package_lock.json
+
+settings.json
+aggregated_articles.js
