@@ -1,4 +1,4 @@
-#-e . # This installs our project "newsfeed" so we can do import newsfeed in our python code
+-e . # This installs our project "newsfeed" so we can do import newsfeed in our python code
 black
 isort
 pytest
@@ -11,5 +11,7 @@ lxml
 pydantic==1.10.10
 openai
 schedule
-langchain
 discord
+sqlalchemy
+psycopg2-binary
+apache-airflow
