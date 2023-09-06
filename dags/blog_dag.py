@@ -1,19 +1,34 @@
-# In your single DAG file
-
 from datetime import datetime, timedelta
 
 from airflow import DAG
-from airflow.operators.python import PythonOperator
+from airflow.operators.empty import EmptyOperator
+from airflow.operators.python import BranchPythonOperator, PythonOperator
 
 
-# Function1
-def function1():
-    print("Function 1 executed")
+## ↓↓☻ PLACEHOLDER FUNCTIONS ↓↓☻ ##
+def get_blog_type(**kwargs):
+    pass
 
 
-# Function2
-def function2():
-    print("Function 2 executed")
+def download_blogs_from_rss(**kwargs):
+    pass
+
+
+def blog_scraper(**kwargs):
+    pass
+
+
+## ↑↑☻ PLACEHOLDER FUNCTIONS ↑↑☻ ##
+
+
+# Function to choose the branch
+def choose_branch(**kwargs):
+    # Implement your logic here
+    blog_type = get_blog_type()  # your function to determine blog type
+    if blog_type == "XML blogs":
+        return "download_blogs_from_rss"
+    if blog_type == "web_scrape blogs":
+        return "blog_scraper"
 
 
 # Default Args
@@ -27,27 +42,50 @@ default_args = {
     "retry_delay": timedelta(minutes=5),
 }
 
-# DAG definition
 dag = DAG(
-    "my_single_dag",
+    "my_complex_dag",
     default_args=default_args,
-    description="My single DAG with multiple tasks",
+    description="A complex DAG with conditional tasks",
     schedule_interval=timedelta(days=1),
 )
 
-# Task1 for function1
-task1 = PythonOperator(
-    task_id="function1_task",
-    python_callable=function1,
+start = EmptyOperator(
+    task_id="start",
     dag=dag,
 )
 
-# Task2 for function2
-task2 = PythonOperator(
-    task_id="function2_task",
-    python_callable=function2,
+choose_branch_task = BranchPythonOperator(
+    task_id="choose_branch",
+    python_callable=choose_branch,
+    provide_context=True,
     dag=dag,
 )
 
-# Setting task sequence
-task1 >> task2
+download_blogs_from_rss_task = PythonOperator(
+    task_id="download_blogs_from_rss",
+    python_callable=download_blogs_from_rss,
+    dag=dag,
+)
+
+blog_scraper_task = PythonOperator(
+    task_id="blog_scraper",
+    python_callable=blog_scraper,
+    dag=dag,
+)
+
+join = EmptyOperator(
+    task_id="join",
+    dag=dag,
+)
+
+end = EmptyOperator(
+    task_id="end",
+    dag=dag,
+)
+
+start >> choose_branch_task
+choose_branch_task >> download_blogs_from_rss_task
+choose_branch_task >> blog_scraper_task
+download_blogs_from_rss_task >> join
+blog_scraper_task >> join
+join >> end
