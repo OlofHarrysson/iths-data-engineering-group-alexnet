@@ -86,13 +86,6 @@ def get_openai_blog_articles(link="https://openai.com/blog"):
     return article_data
 
 
-def convertify_date(date_string):
-    date_object = datetime.strptime(date_string, "%b %d, %Y")
-    formatted_date = date_object.strftime("%Y-%m-%d")
-
-    return formatted_date
-
-
 def save_articles_as_json(articles, save_path):
     os.makedirs(save_path, exist_ok=True)
 
