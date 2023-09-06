@@ -39,6 +39,11 @@ def summarize_text(article_text, suffix="normal") -> str:
 
 
 def translate_title(title, type):
+    with open("api-key.json") as f:
+        OPENAI_API_KEY = json.load(f)
+
+    openai.api_key = OPENAI_API_KEY["OPENAI_API_KEY"]
+
     # prompt / context to chat gpt.
     conversation = [
         {"role": "system", "content": "You are a helpful assistant that translates titles."},

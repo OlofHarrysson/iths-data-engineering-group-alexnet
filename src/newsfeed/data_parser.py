@@ -2,9 +2,10 @@ import json
 import os
 from urllib.parse import unquote
 
-from sqlalchemy import create_engine, insert
+from sqlalchemy import MetaData, create_engine, insert
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.automap import automap_base
+from sqlalchemy.orm import sessionmaker
 
 from newsfeed.datatypes import BlogSummary
 from newsfeed.summarize import summarize_text, summary_types, translate_title
@@ -80,48 +81,46 @@ def store_in_database(path: str = None, data: [] = None):
             try:
                 result = conn.execute(query)
                 conn.commit()
-                parse_summary(item, summary_table)
+                parse_summary(item)
             except IntegrityError as e:
                 print(f"Error: {e}. Skipping duplicate row with ID {item['unique_id']}.")
                 conn.rollback()  # Rollback the transaction to keep the database in a consistent state
 
 
-def parse_summary(article: object, summary_table_name: str):
-    summary_list = []
+def parse_summary(article):
+    print("Summmmmmmmmmmmmmary")
 
-    summary_table = Base.classes.get(summary_table_name)
+    metadata = MetaData()
+    metadata.reflect(engine)
+
+    Base = automap_base(metadata=metadata)
+
+    Base.prepare()
+
+    Blog_summaries = Base.classes.blog_summaries
+
+    Session = sessionmaker(bind=engine)
+    session = Session()
 
     for key in summary_types:
-        if article["blog_name"] != "mit" and key == "swedish":
+        if key == "swedish" and article["blog_name"] != "mit":
             pass
 
-        blog_summary = BlogSummary(unique_id=article["unique_id"])
+        new_record = Blog_summaries(
+            unique_id=article["unique_id"],
+            translated_title=translate_title(article["title"], key)
+            if key not in ["normal", "non_technical"]
+            else None,
+            summary=summarize_text(article["blog_text"], suffix=key),
+            type_of_summary=key,
+        )
 
-        blog_summary.summary = summarize_text(article["blog_text"], suffix=summary_types[key])
+        session.add(new_record)
+        session.commit()
 
-        # checks if it should translate the title.
-        if key not in ["normal", "non_technical"]:
-            blog_summary.translated_title = translate_title(article["title"], key)
-
-        # Only static text (e.g. "English Simplified", "Swedish Technical")
-        blog_summary.type_of_summary = key
-
-        with engine.connect() as conn:
-            query = insert(summary_table).values(
-                unique_id=blog_summary["unique_id"],
-                translated_title=blog_summary["translated_title"],
-                summary=blog_summary["summary"],
-                type_of_summary=blog_summary["type_of_summary"],
-            )
-
-            try:
-                result = conn.execute(query)
-                conn.commit()
-            except IntegrityError as e:
-                print(f"Error: {e}. Skipping duplicate row with ID {blog_summary['unique_id']}.")
-                conn.rollback()  # Rollback the transaction to keep the database in a consistent state
+    session.close()
 
 
 store_in_database(
-    path="data/data_warehouse/ts/articles/1ec205c0-dbb8-522b-8838-0f6302734c32_A_new_Kaggle_competition_to_help_parents_of_deaf_children_learn_sign_language.json"
+    path="data/data_warehouse/mit/articles/26609bc3-35e4-53aa-aa63-e6f9e2456422_Bringing_the_social_and_ethical_responsibilities_of_computing_to_the_forefront.json"
 )
