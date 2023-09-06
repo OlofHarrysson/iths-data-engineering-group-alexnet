@@ -109,7 +109,7 @@ async def send_message(ctx):
     Sends a hello message to a channel.
     """
     # Replace 'your_channel_id' with the actual channel ID where you want to send the message
-    channel = bot.get_channel(1148542025491288095)
+    channel = bot.get_channel(int(keys["DISCORD_BOT_CHANNEL"]))
 
     # Send a message to the specified channel
     await channel.send("Hello World")
