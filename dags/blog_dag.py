@@ -14,6 +14,10 @@ def download_blogs_from_rss(**kwargs):
     pass
 
 
+def extract_articles(**kwargs):
+    pass
+
+
 def blog_scraper(**kwargs):
     pass
 
@@ -93,6 +97,12 @@ download_blogs_from_rss_task = PythonOperator(
     dag=dag,
 )
 
+extract_articles_task = PythonOperator(
+    task_id="extract_articles",
+    python_callable=extract_articles,
+    dag=dag,
+)
+
 blog_scraper_task = PythonOperator(
     task_id="blog_scraper",
     python_callable=blog_scraper,
@@ -135,10 +145,10 @@ end = EmptyOperator(
 )
 
 start >> create_table >> choose_branch_task
-choose_branch_task >> download_blogs_from_rss_task
+choose_branch_task >> download_blogs_from_rss_task >> extract_articles_task
 choose_branch_task >> blog_scraper_task
-download_blogs_from_rss_task >> join
+extract_articles_task >> join
 blog_scraper_task >> join
-join >> data_parser_task >> summary_parser_task
-summary_parser_task >> discord_task >> end
-summary_parser_task >> app_task >> end
+join >> data_parser_task
+data_parser_task >> discord_task >> end
+data_parser_task >> app_task >> end
