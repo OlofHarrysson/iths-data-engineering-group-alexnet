@@ -11,5 +11,7 @@ lxml
 pydantic==1.10.10
 openai
 schedule
-langchain
 discord
+sqlalchemy
+psycopg2-binary
+apache-airflow

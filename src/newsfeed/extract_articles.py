@@ -31,7 +31,7 @@ def load_metadata(blog_name):
     return parsed_xml
 
 
-def extract_mit_articles_from_xml(parsed_xml):
+def extract_mit_articles_from_xml(parsed_xml, blog_name):
     articles = []
     for item in parsed_xml.find_all("item"):
         raw_blog_text = item.find("encoded").text
@@ -45,6 +45,7 @@ def extract_mit_articles_from_xml(parsed_xml):
             description=item.description.text if item.description else None,
             link=item.link.text if item.link else None,
             blog_text=blog_text,
+            blog_name=blog_name,
             published=pd.to_datetime(item.pubDate.text).date() if item.pubDate else None,
             timestamp=datetime.now(),
         )
@@ -52,7 +53,7 @@ def extract_mit_articles_from_xml(parsed_xml):
     return articles
 
 
-def extract_tensorflow_articles_from_xml(parsed_xml):
+def extract_tensorflow_articles_from_xml(parsed_xml, blog_name):
     articles = []
     for item in parsed_xml.find_all("item"):
         encoded_element = item.find("encoded")
@@ -73,6 +74,7 @@ def extract_tensorflow_articles_from_xml(parsed_xml):
             description=item.description.text if item.description else None,
             link=link,
             blog_text=blog_text,
+            blog_name=blog_name,
             published=pd.to_datetime(item.pubDate.text).date() if item.pubDate else None,
             timestamp=datetime.now(),
         )
@@ -116,9 +118,9 @@ def main(blog_name):
     parsed_xml = load_metadata(blog_name)
 
     if blog_name == "mit":
-        articles = extract_mit_articles_from_xml(parsed_xml)
+        articles = extract_mit_articles_from_xml(parsed_xml, blog_name)
     elif blog_name == "ts":
-        articles = extract_tensorflow_articles_from_xml(parsed_xml)
+        articles = extract_tensorflow_articles_from_xml(parsed_xml, blog_name)
     else:
         print("Invalid blog_name. Supported names are 'mit' and 'ts'")
         return
