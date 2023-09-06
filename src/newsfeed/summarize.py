@@ -68,6 +68,7 @@ def get_save_path(input_dir):
     root_paths = {
         "mit": "data/data_warehouse/mit/summaries",
         "ts": "data/data_warehouse/ts/summaries",
+        "openai": "data/data_warehouse/openai/summaries",
     }
 
     # check if blog is from "mit" or "ts"

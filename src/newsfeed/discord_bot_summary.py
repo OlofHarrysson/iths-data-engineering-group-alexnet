@@ -41,18 +41,6 @@ with open("api-key.json") as f:
 # Get the Discord webhook URL from api-key.json
 DISCORD_WEBHOOK_URL = keys["DISCORD_WEBHOOK_URL"]
 
-# Configuration and Global Variables
-METADATA_FILE_PATH = os.path.join(
-    os.path.expanduser("~"),
-    "Desktop",
-    "Github",
-    "iths-data-engineering-group-alexnet",
-    "data",
-    "data_lake",
-    "mit",
-    "metadata.xml",
-)
-
 
 # Animation function for the running dots
 async def animate_dots():
@@ -105,9 +93,9 @@ def add_line_breaks(text, line_length):
 
 
 # Check for new articles and send summaries
-async def check_and_send():
+async def check_and_send(blog_name="mit"):
     # Call get_latest_article from his script
-    title, summary, link, date = get_latest_article(summary_type="non_technical")
+    title, summary, link, date = get_latest_article(blog_name, summary_type="non_technical")
 
     send_discord_message(
         DISCORD_WEBHOOK_URL,
