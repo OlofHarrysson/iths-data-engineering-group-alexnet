@@ -18,3 +18,8 @@ CREATE TABLE blog_summaries (
     CONSTRAINT unique_summary_per_type UNIQUE (unique_id, type_of_summary)
 );
 
+SELECT bi.*
+FROM bloginfo bi
+LEFT JOIN blog_summaries bs ON bi.unique_id = bs.unique_id
+WHERE bs.unique_id IS NULL
+ORDER BY bi.timestamp DESC;
