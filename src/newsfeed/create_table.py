@@ -19,6 +19,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 Base = declarative_base()
 
 
+# table class
 class BlogInfo(Base):
     __tablename__ = "bloginfo"
 
@@ -32,6 +33,7 @@ class BlogInfo(Base):
     timestamp = Column(TIMESTAMP)
 
 
+# table class
 class BlogSummaries(Base):
     __tablename__ = "blog_summaries"
 
@@ -47,12 +49,14 @@ class BlogSummaries(Base):
 
 
 def create_table():
+    # gets password and username.
     with open("api-key.json") as file:
         data = json.load(file)
 
         username = data["DB_username"]
         password = data["DB_password"]
 
+    # server name and db name.
     server_name = "localhost"
     database_name = "postgres"
 
@@ -61,6 +65,7 @@ def create_table():
 
     print("Connecting to database using URL string:")
 
+    # try to connect to db.
     try:
         engine = create_engine(DB_URL)
         session = sessionmaker(bind=engine)
@@ -71,12 +76,12 @@ def create_table():
         print("Error while connecting to database:\n")
         print(e)
 
+    # inspector object to check if tables exist.
     inspector = inspect(engine)
+
+    # creates tabels if they dont exist.
     if not inspector.has_table("bloginfo") or not inspector.has_table("blog_summaries"):
         Base.metadata.create_all(engine)
         print("Tables created successfully.")
     else:
         print("Tables already exist.")
-
-
-create_table()
