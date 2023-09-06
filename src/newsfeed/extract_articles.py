@@ -45,7 +45,7 @@ def extract_mit_articles_from_xml(parsed_xml, blog_name):
             description=item.description.text if item.description else None,
             link=item.link.text if item.link else None,
             blog_text=blog_text,
-            blog=blog_name,
+            blog_name=blog_name,
             published=pd.to_datetime(item.pubDate.text).date() if item.pubDate else None,
             timestamp=datetime.now(),
         )
@@ -74,7 +74,7 @@ def extract_tensorflow_articles_from_xml(parsed_xml, blog_name):
             description=item.description.text if item.description else None,
             link=link,
             blog_text=blog_text,
-            blog=blog_name,
+            blog_name=blog_name,
             published=pd.to_datetime(item.pubDate.text).date() if item.pubDate else None,
             timestamp=datetime.now(),
         )

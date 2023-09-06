@@ -4,7 +4,7 @@ CREATE TABLE bloginfo (
     description TEXT,
     link VARCHAR(255),
     blog_text TEXT,
-    blog VARCHAR(255),
+    blog_name VARCHAR(255),
     published DATE,
     timestamp TIMESTAMP
 );
@@ -17,9 +17,4 @@ CREATE TABLE blog_summaries (
     type_of_summary VARCHAR(255) DEFAULT 'DefaultSummaryType',
     CONSTRAINT unique_summary_per_type UNIQUE (unique_id, type_of_summary)
 );
-
-ALTER TABLE blog_summaries
-ADD CONSTRAINT fk_blog_summaries_unique_id
-FOREIGN KEY (unique_id)
-REFERENCES bloginfo(unique_id);
 
