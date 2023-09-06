@@ -41,18 +41,6 @@ with open("api-key.json") as f:
 # Get the Discord webhook URL from api-key.json
 DISCORD_WEBHOOK_URL = keys["DISCORD_WEBHOOK_URL"]
 
-# Configuration and Global Variables
-METADATA_FILE_PATH = os.path.join(
-    os.path.expanduser("~"),
-    "Desktop",
-    "Github",
-    "iths-data-engineering-group-alexnet",
-    "data",
-    "data_lake",
-    "mit",
-    "metadata.xml",
-)
-
 
 # Animation function for the running dots
 async def animate_dots():
