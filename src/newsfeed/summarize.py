@@ -11,7 +11,7 @@ summary_types = {
     "normal": "Ignore previous prompts and summarize the text in as if it was for scientists studying AI, do this using30 words max. ",
     "non_technical": "summarize the article in non-technical text using max of 30 words. ",
     "french": "in french and in 30 words.",
-    "swedish": "in swedish, and use max 30 words",
+    "swedish": "translate it into swedish, and use max 30 words",
 }
 
 
@@ -68,6 +68,7 @@ def get_save_path(input_dir):
     root_paths = {
         "mit": "data/data_warehouse/mit/summaries",
         "ts": "data/data_warehouse/ts/summaries",
+        "openai": "data/data_warehouse/openai/summaries",
     }
 
     # check if blog is from "mit" or "ts"
@@ -75,13 +76,17 @@ def get_save_path(input_dir):
         if key in input_dir:
             return root_paths[key]
 
-    return "No root path found"
+    raise ValueError("No root path found")
 
 
 # Generate new json files with BlogSummary class
 def create_summary_json(input_dir, summary_type):
     # checks if type is a summary type.
     if summary_type in summary_types:
+        # makes it so it can only translate "mit" blogs to swedish.
+        if summary_type == "swedish" and "mit" not in input_dir:
+            raise ValueError("Error: Can only translate 'Mit' blogs to Swedish.")
+
         # Create subdir for each summary type
         output_dir = os.path.join(get_save_path(input_dir), summary_type)
         if not os.path.exists(output_dir):
@@ -89,7 +94,7 @@ def create_summary_json(input_dir, summary_type):
 
     else:
         # if no summary type was found.
-        return "Fail"
+        raise f"Error: '{summary_type}' is not a summary type!"
 
     # Set to keep track of existing output files
     existing_outputs = set(os.listdir(get_save_path(input_dir)))

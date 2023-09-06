@@ -93,9 +93,9 @@ def add_line_breaks(text, line_length):
 
 
 # Check for new articles and send summaries
-async def check_and_send():
+async def check_and_send(blog_name="mit"):
     # Call get_latest_article from his script
-    title, summary, link, date = get_latest_article(summary_type="non_technical")
+    title, summary, link, date = get_latest_article(blog_name, summary_type="non_technical")
 
     send_discord_message(
         DISCORD_WEBHOOK_URL,
