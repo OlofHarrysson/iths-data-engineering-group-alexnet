@@ -1,6 +1,6 @@
 // components/Header.js
 import React from 'react';
-import styles from './alx_header.module.css';
+import styles from './header.module.css';
 
 const Header = () => {
     return (
