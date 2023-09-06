@@ -1,6 +1,6 @@
 import asyncio
 
-from newsfeed import discord_bot_v3 as bot
+from newsfeed import discord_bot_summary as bot
 from newsfeed import download_blogs_from_rss, extract_articles
 
 

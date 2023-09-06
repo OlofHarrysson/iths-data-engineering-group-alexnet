@@ -8,33 +8,27 @@ import openai
 from newsfeed.datatypes import BlogSummary
 
 summary_types = {
-    "normal": "Ignore previous prompts and summarize the text in as if it was for scientists studying AI, do this using30 words max. ",
-    "non_technical": "summarize the article in non-technical text using max of 30 words. ",
-    "french": "in french and in 30 words.",
-    "swedish": "translate it into swedish, and use max 30 words",
+    "normal": "",
+    "non_technical": "in a clear and simple manner suitable for a broad audience. Avoid technical jargon and keep sentences concise. Make sure a 4 year old could read and understand it. The text must simple enough that a 4 year old could read and understand it. People with no previous knowledge in technology needs to be able to read it. The english must be simple and plain, so that people with english as second language can understand it. Include descriptions in parenthesis for any acronyms such as AI (Artifical Intellegence)",
+    "french": "and translate it into French and in max 30 words",
+    "swedish": "in Swedish and in max 30 words",
 }
 
 
-def summarize_text(article_text, prefix="normal") -> str:
-    # Get key
+def summarize_text(article_text, suffix="normal") -> str:
     with open("api-key.json") as f:
         OPENAI_API_KEY = json.load(f)
 
     openai.api_key = OPENAI_API_KEY["OPENAI_API_KEY"]
 
-    base_prompt = f"Summarize the following text:\n{article_text}\n"
-
-    if prefix == "normal":
-        prompt = base_prompt + "Summary:"
-    else:
-        prompt = f"{prefix}, " + base_prompt + "Summary:"
+    prompt = f"Summarize the following text {suffix}:\nText:{article_text}\n"
 
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
             {
                 "role": "system",
-                "content": f"""Summarize this MIT article in a clear and simple manner suitable for a broad audience. Avoid technical jargon and keep sentences concise. Make sure a 4 year old could read and understand it. The text must simple enough that a 4 year old could read and understand it. People with no previous knowledge in technology needs to be able to read it. The english must be simple and plain, so that people with english as second language can understand it. Include descriptions for any acronyms such as AI (Artifical Intellegence). {prefix}""",
+                "content": f"""You are an assistant that summarizes text. You only respond with the summarized text.""",
             },
             {"role": "user", "content": prompt},
         ],
@@ -68,6 +62,7 @@ def get_save_path(input_dir):
     root_paths = {
         "mit": "data/data_warehouse/mit/summaries",
         "ts": "data/data_warehouse/ts/summaries",
+        "openai": "data/data_warehouse/openai/summaries",
     }
 
     # check if blog is from "mit" or "ts"
@@ -108,7 +103,7 @@ def create_summary_json(input_dir, summary_type):
             blog_summary = BlogSummary(**json_content)
 
             blog_summary.summary = summarize_text(
-                json_content["blog_text"], prefix=summary_types[summary_type]
+                json_content["blog_text"], suffix=summary_types[summary_type]
             )
 
             # checks if it should translate the title.
@@ -213,3 +208,7 @@ def get_latest_article(blog_identifier: str = "mit", summary_type: str = "normal
             latest_title = translated_title
 
     return latest_title, summary, latest_link, latest_date
+
+
+if __name__ == "__main__":
+    get_latest_article(blog_identifier="mit", summary_type="swedish")
