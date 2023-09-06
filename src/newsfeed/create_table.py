@@ -79,7 +79,7 @@ def create_table():
     # inspector object to check if tables exist.
     inspector = inspect(engine)
 
-    # creates tabels if they dont exist.
+    # creates tables if they dont exist.
     if not inspector.has_table("bloginfo") or not inspector.has_table("blog_summaries"):
         Base.metadata.create_all(engine)
         print("Tables created successfully.")
