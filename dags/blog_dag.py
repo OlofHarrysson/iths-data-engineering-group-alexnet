@@ -4,6 +4,8 @@ from airflow import DAG
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import BranchPythonOperator, PythonOperator
 
+from newsfeed import *
+
 
 ## ↓↓☻ PLACEHOLDER FUNCTIONS ↓↓☻ ##
 def get_blog_type(**kwargs):
