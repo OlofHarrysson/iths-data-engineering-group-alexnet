@@ -11,12 +11,12 @@ from newsfeed.extract_articles import create_uuid_from_string
 ### Actual blog text is stored under: ui-richtext
 
 
-def get_openai_blog_articles(link="https://openai.com/blog"):
-    response = requests.get(link)
+def get_openai_blog_articles(url="https://openai.com/blog"):
+    response = requests.get(url)
 
     # Check if the request was successful
     if response.status_code != 200:
-        print(f"Failed to get data from {link}")
+        print(f"Failed to get data from {url}")
         return []
 
     soup = BeautifulSoup(response.text, "html.parser")  # Parse the HTML as a string
@@ -41,12 +41,12 @@ def get_openai_blog_articles(link="https://openai.com/blog"):
         if date_element and "2023" in date_element.get_text().strip():
             if title_element:
                 title = title_element.get_text()
-                article_link = "https://openai.com" + article["href"]
+                article_url = "https://openai.com" + article["href"]
 
-                print(f"Fetching article: {title}, link: {article_link}")
+                print(f"Fetching article: {title}, url: {article_url}")
 
                 # Fetch the article
-                article_response = requests.get(article_link)
+                article_response = requests.get(article_url)
                 article_soup = BeautifulSoup(article_response.text, "html.parser")
 
                 # Now look for the description element
@@ -73,7 +73,8 @@ def get_openai_blog_articles(link="https://openai.com/blog"):
                     unique_id=create_uuid_from_string(title),
                     title=title,
                     description=description,
-                    link=article_link,
+                    blog_name="OpenAI",
+                    link=article_url,
                     blog_text=article_content,
                     published=datetime.strptime(
                         date_element.get_text().strip(), "%b %d, %Y"
@@ -110,7 +111,7 @@ if __name__ == "__main__":
     else:
         for i, article in enumerate(articles):
             print(
-                f"{i+1}. {article.title}\n   Link: {article.link}\n   Date: {article.published}\n   Content: {article.blog_text[:10]}..."
+                f"{i+1}. {article.title}\n   link: {article.link}\n   Date: {article.published}\n   Content: {article.blog_text[:10]}..."
             )
 
         save_path = "data/data_warehouse/openai/articles"
