@@ -4,13 +4,15 @@ FROM apache/airflow:latest-python3.10
 # Set the working directory in the container
 WORKDIR /alexnet
 
-# Copy the current directory contents into the container at /app
-COPY /data /alexnet/
-COPY requirements.txt /alexnet/
+COPY requirements.txt .
 
-# Install any needed packages specified in requirements.txt
-RUN pip install -r requirements.txt
+# Copy data_lake and data_warehouse
+COPY data .
 
-# CI/CD HERE
+# Copy requirements.txt into the container
+RUN grep -v "^-e" requirements.txt > requirements_without_editable_install.txt
+RUN pip install -r requirements_without_editable_install.txt
 
-# Command to run your Python application
+RUN echo "Finished"
+
+#CMD ["python", "main.py"]
