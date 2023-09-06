@@ -24,7 +24,7 @@ Dependencies:
 
 To use this script, run it with your bot's token provided in the 'api-key.json' file.
 
-Author: [Your Name]
+Author: Hannes
 """
 
 import asyncio
@@ -65,7 +65,7 @@ class CustomHelpCommand(commands.HelpCommand):
 
         await self.get_destination().send(embed=embed)
 
-        # You can also add additional information here if needed
+        # For additional information about the different commands
         await self.get_destination().send(
             "For more details on a specific command, use `!help [command]`."
         )

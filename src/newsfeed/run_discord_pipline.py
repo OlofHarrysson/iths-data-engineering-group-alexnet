@@ -1,7 +1,7 @@
 import asyncio
 
 from newsfeed import download_blogs_from_rss, extract_articles
-from newsfeed.discord_bot import (
+from newsfeed.discord_bot_commands import (
     main as bot_main,  # Updated import for your renamed bot file
 )
 
