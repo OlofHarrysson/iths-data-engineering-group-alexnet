@@ -73,6 +73,7 @@ def get_openai_blog_articles(link="https://openai.com/blog"):
                     unique_id=create_uuid_from_string(title),
                     title=title,
                     description=description,
+                    blog_name="OpenAI",
                     link=article_link,
                     blog_text=article_content,
                     published=datetime.strptime(
@@ -110,7 +111,7 @@ if __name__ == "__main__":
     else:
         for i, article in enumerate(articles):
             print(
-                f"{i+1}. {article.title}\n   Link: {article.link}\n   Date: {article.published}\n   Content: {article.blog_text[:10]}..."
+                f"{i+1}. {article.title}\n   link: {article.link}\n   Date: {article.published}\n   Content: {article.blog_text[:10]}..."
             )
 
         save_path = "data/data_warehouse/openai/articles"
