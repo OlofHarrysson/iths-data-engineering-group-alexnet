@@ -1,19 +1,29 @@
-import React, { useState } from 'react';
-import jsonData from './aggregated_articles';
+import React, { useState, useEffect } from 'react';
+import jsonData from './aggregated_articles'; // Import jsonData
 import './App.css';
 import Header from './Header';
 import Footer from './Footer';
-import ArticleCard from './articleCard';
-
-import { toggleDarkMode } from './darkMode';
+import ArticleCard from './articleCard'; // Import ArticleCard
+import { toggleDarkMode, getCookie, setCookie } from './darkMode'; // Import setCookie
 
 function App() {
-  const [darkMode, setDarkMode] = useState(false);
+  // Retrieve the dark mode preference from the cookie
+  const initialDarkModePref = getCookie('dark_mode');
+  const [darkMode, setDarkMode] = useState(initialDarkModePref === '1'); // Set initial state based on cookie
 
   const handleToggleDarkMode = () => {
     toggleDarkMode(); // Call toggleDarkMode function from darkMode.js
-    setDarkMode(prevDarkMode => !prevDarkMode);
+    const newDarkModeValue = !darkMode;
+    setDarkMode(newDarkModeValue);
+
+    // Update the dark mode preference in the cookie
+    setCookie('dark_mode', newDarkModeValue ? '1' : '0', 365);
   };
+
+  useEffect(() => {
+    // This effect runs when the component mounts
+    // You can use it for other initializations if needed
+  }, []);
 
   return (
     <div className={darkMode ? 'dark-mode' : ''}>
