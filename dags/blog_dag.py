@@ -13,7 +13,11 @@ def get_blog_type(**kwargs):
 
 
 def download_blogs_from_rss(**kwargs):
-    pass
+    args = download_blogs_from_rss.parse_args("ts")
+    download_blogs_from_rss.main()
+
+    args = download_blogs_from_rss.parse_args("mit")
+    download_blogs_from_rss.main()
 
 
 def extract_articles(**kwargs):
