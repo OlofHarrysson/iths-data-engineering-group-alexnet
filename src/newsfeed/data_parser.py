@@ -105,10 +105,10 @@ def parse_summary(article):
 
     for key in summary_types:
         if key == "swedish" and article["blog_name"] != "mit":
-            pass
+            continue
 
-        if article["published"] > datetime(2023, 9, 5):
-            pass
+        if datetime.strptime(article["published"], "%Y-%m-%d") < datetime(2023, 9, 5):
+            break
 
         print(f"Sums up '{article['unique_id']} with type: {key}'")
 
@@ -127,8 +127,3 @@ def parse_summary(article):
         session.commit()
 
     session.close()
-
-
-store_in_database(
-    path="data/data_warehouse/mit/articles/26609bc3-35e4-53aa-aa63-e6f9e2456422_Bringing_the_social_and_ethical_responsibilities_of_computing_to_the_forefront.json"
-)
