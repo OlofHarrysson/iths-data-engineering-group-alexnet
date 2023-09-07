@@ -58,8 +58,6 @@ def get_data(path: str) -> list:
 
 def store_in_database(path: str = None, data: [] = None):
     data_list = []
-    article_table = "bloginfo"
-    summary_table = "blog_summaries"
 
     if path is None and data is None:
         raise ValueError(
@@ -73,19 +71,41 @@ def store_in_database(path: str = None, data: [] = None):
     if data != None:
         data_list += data
 
-    db_table = Base.classes.get(article_table)
+    metadata = MetaData()
+    metadata.reflect(engine)
+
+    Base = automap_base(metadata=metadata)
+
+    Base.prepare()
+
+    Blog_articles = Base.classes.bloginfo
+
+    Session = sessionmaker(bind=engine)
+    session = Session()
 
     for item in data_list:
-        query = insert(db_table).values(**item)
+        new_record = Blog_articles(
+            unique_id=item.unique_id,
+            title=item.title,
+            description=item.description,
+            link=item.link,
+            blog_text=item.blog_text,
+            blog_name=item.blog_name,
+            published=item.published,
+            timestamp=item.timestamp,
+        )
 
-        with engine.connect() as conn:
-            try:
-                result = conn.execute(query)
-                conn.commit()
-                # parse_summary(item)
-            except IntegrityError as e:
-                print(f"Error: {e}. Skipping duplicate row with ID {item['unique_id']}.")
-                conn.rollback()  # Rollback the transaction to keep the database in a consistent state
+        print(f"processing article: '{item.unique_id}'")
+
+        try:
+            session.add(new_record)
+            session.commit()
+            # parse_summary(item)
+        except IntegrityError as e:
+            print(f"Error: {e}. Skipping duplicate row with ID {item.unique_id}.")
+            session.rollback()  # Rollback the transaction to keep the database in a consistent state
+
+        print(f"successfully stored article: '{item.unique_id}' into database")
 
 
 def parse_summary(article):
