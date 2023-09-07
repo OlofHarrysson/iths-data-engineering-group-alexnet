@@ -19,6 +19,18 @@ function App() {
     <div className={darkMode ? 'dark-mode' : ''}>
       <Header />
 
+      {/* Add the Search bar */}
+      <div id="search-bar">
+        <form>
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Search..."
+          />
+          <button type="submit">Search</button>
+        </form>
+      </div>
+
       <div className="card-space">
         {jsonData.map((item, index) => (
           <ArticleCard key={index} item={item} darkMode={darkMode} />

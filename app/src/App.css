@@ -133,3 +133,23 @@ body {
   margin-bottom: -10px;
   text-align: center;
 }
+
+/* Search bar styles */
+#search-bar {
+  text-align: center;
+
+  margin: 20px;
+}
+
+#search-input {
+  padding: 10px;
+  width: 300px;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #24763c;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+}
