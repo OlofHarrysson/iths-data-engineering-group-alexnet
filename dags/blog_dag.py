@@ -1,46 +1,54 @@
+import logging
 from datetime import datetime
 
 from airflow import DAG
 from airflow.decorators import dag, task
 
-from newsfeed.create_table import create_table
-from newsfeed.download_blogs_from_rss import main as main_rss
-from newsfeed.extract_articles import main as main_extract
+import newsfeed
+from newsfeed import (
+    blog_scraper,
+    create_table,
+    download_blogs_from_rss,
+    extract_articles,
+)
+
+logger = logging.getLogger(__name__)
 
 
 @task(task_id="start")
 def start_task() -> None:
-    print("Starting pipeline...")
+    logger.info("Starting pipeline...")
 
 
 @task(task_id="join")
 def join_task() -> None:
-    print("Joining tasks...")
+    logger.info("Joining tasks...")
 
 
 @task(task_id="end")
 def end_task() -> None:
-    print("Ending pipeline...")
+    logger.info("Ending pipeline...")
 
 
 @task(task_id="create_table")
 def create_table_task() -> None:
-    print("Running create_table...")
-    create_table()
+    logger.info("Running create_table from DAG")
+    newsfeed.create_table.main()
 
 
 @task(task_id="download_blogs_from_rss")
 def download_blogs_from_rss_task() -> None:
-    print("Running download_blogs_from_rss...")
-    main_rss("mit")
-    main_rss("ts")
+    logger.info("Running download_blogs_from_rss from DAG")
+    newsfeed.download_blogs_from_rss.main("mit")
+    newsfeed.download_blogs_from_rss.main("ts")
+    newsfeed.blog_scraper.main()  # OpenAI Blog
 
 
 @task(task_id="extract_articles")
 def extract_articles_task() -> None:
-    print("Running extract_articles...")
-    main_extract("mit")
-    main_extract("ts")
+    logger.info("Running extract_articles from DAG")
+    newsfeed.extract_articles.main("mit")
+    newsfeed.extract_articles.main("ts")
 
 
 @dag(
