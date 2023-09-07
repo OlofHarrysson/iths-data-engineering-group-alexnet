@@ -28,7 +28,7 @@ class BlogInfo(Base):
     description = Column(Text)
     link = Column(String(255))
     blog_text = Column(Text)
-    blog = Column(String(255))
+    blog_name = Column(String(255))
     published = Column(Date)
     timestamp = Column(TIMESTAMP)
 
