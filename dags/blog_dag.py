@@ -6,6 +6,7 @@ from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import BranchPythonOperator, PythonOperator
 
 from newsfeed import *
+from newsfeed.download_blogs_from_rss import main as rss_main
 
 
 ## ↓↓☻ PLACEHOLDER FUNCTIONS ↓↓☻ ##
@@ -15,11 +16,8 @@ def get_blog_type(**kwargs):
 
 def download_blogs_from_rss(**kwargs):
     logging.info("Running download_blogs_from DAG")
-    args = download_blogs_from_rss.parse_args("ts")
-    download_blogs_from_rss.main(args)
-
-    args = download_blogs_from_rss.parse_args("mit")
-    download_blogs_from_rss.main(args)
+    rss_main("mit")
+    rss_main("ts")
 
 
 def extract_articles(**kwargs):
@@ -141,8 +139,7 @@ end = EmptyOperator(
     dag=dag,
 )
 
-# start >> create_table >> choose_branch_task
-# choose_branch_task >> download_blogs_from_rss_task >> extract_articles_task
+download_blogs_from_rss_task >> extract_articles_task
 choose_branch_task >> blog_scraper_task
 extract_articles_task >> join
 blog_scraper_task >> join
