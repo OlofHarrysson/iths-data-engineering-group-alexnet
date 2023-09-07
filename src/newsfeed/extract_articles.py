@@ -8,6 +8,7 @@ import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 
+from newsfeed.data_parser import store_in_database
 from newsfeed.datatypes import BlogInfo
 
 
@@ -125,7 +126,7 @@ def main(blog_name):
         print("Invalid blog_name. Supported names are 'mit' and 'ts'")
         return
 
-    save_articles(articles, blog_name)
+    store_in_database(data=articles)
     print(f"Done processing {blog_name}")
 
 

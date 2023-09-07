@@ -82,7 +82,7 @@ def store_in_database(path: str = None, data: [] = None):
             try:
                 result = conn.execute(query)
                 conn.commit()
-                parse_summary(item)
+                # parse_summary(item)
             except IntegrityError as e:
                 print(f"Error: {e}. Skipping duplicate row with ID {item['unique_id']}.")
                 conn.rollback()  # Rollback the transaction to keep the database in a consistent state

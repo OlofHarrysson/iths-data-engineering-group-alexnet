@@ -7,6 +7,7 @@ from airflow.operators.python import BranchPythonOperator, PythonOperator
 
 from newsfeed import *
 from newsfeed.download_blogs_from_rss import main as rss_main
+from newsfeed.extract_articles import main as extract_main
 
 
 ## ↓↓☻ PLACEHOLDER FUNCTIONS ↓↓☻ ##
@@ -21,7 +22,9 @@ def download_blogs_from_rss(**kwargs):
 
 
 def extract_articles(**kwargs):
-    pass
+    logging.info("Running extract_articles DAG")
+    extract_main("mit")
+    extract_main("ts")
 
 
 def blog_scraper(**kwargs):
