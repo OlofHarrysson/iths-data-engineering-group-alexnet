@@ -1,5 +1,6 @@
 import json
 import os
+from datetime import datetime
 from urllib.parse import unquote
 
 from sqlalchemy import MetaData, create_engine, insert
@@ -70,7 +71,7 @@ def store_in_database(path: str = None, data: [] = None):
         print(data_list)
 
     if data != None:
-        data_list.append[data]
+        data_list += data
 
     db_table = Base.classes.get(article_table)
 
@@ -88,7 +89,7 @@ def store_in_database(path: str = None, data: [] = None):
 
 
 def parse_summary(article):
-    print("Summmmmmmmmmmmmmary")
+    print("Starting to summarize article.")
 
     metadata = MetaData()
     metadata.reflect(engine)
@@ -106,6 +107,11 @@ def parse_summary(article):
         if key == "swedish" and article["blog_name"] != "mit":
             pass
 
+        if article["published"] > datetime(2023, 9, 5):
+            pass
+
+        print(f"Sums up '{article['unique_id']} with type: {key}'")
+
         new_record = Blog_summaries(
             unique_id=article["unique_id"],
             translated_title=translate_title(article["title"], key)
@@ -114,6 +120,8 @@ def parse_summary(article):
             summary=summarize_text(article["blog_text"], suffix=key),
             type_of_summary=key,
         )
+
+        print("Summation success!")
 
         session.add(new_record)
         session.commit()
