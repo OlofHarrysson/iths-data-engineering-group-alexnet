@@ -1,13 +1,11 @@
 from datetime import datetime
 
+from airflow import DAG
 from airflow.decorators import dag, task
 
-from newsfeed import (
-    blog_scraper,
-    create_table,
-    download_blogs_from_rss,
-    extract_articles,
-)
+from newsfeed.create_table import create_table
+from newsfeed.download_blogs_from_rss import main as main_rss
+from newsfeed.extract_articles import main as main_extract
 
 
 @task(task_id="start")
@@ -27,24 +25,22 @@ def end_task() -> None:
 
 @task(task_id="create_table")
 def create_table_task() -> None:
-    create_table.main()
+    print("Running create_table...")
+    create_table()
 
 
 @task(task_id="download_blogs_from_rss")
 def download_blogs_from_rss_task() -> None:
-    download_blogs_from_rss.main(blog_name="mit")
-    download_blogs_from_rss.main(blog_name="ts")
+    print("Running download_blogs_from_rss...")
+    main_rss("mit")
+    main_rss("ts")
 
 
 @task(task_id="extract_articles")
 def extract_articles_task() -> None:
-    extract_articles.main(blog_name="mit")
-    extract_articles.main(blog_name="ts")
-
-
-@task(task_id="blog_scraper")
-def blog_scraper_task() -> None:
-    blog_scraper.main(blog_name="openai")
+    print("Running extract_articles...")
+    main_extract("mit")
+    main_extract("ts")
 
 
 @dag(
@@ -54,10 +50,7 @@ def blog_scraper_task() -> None:
     catchup=False,
 )
 def test_pipeline() -> None:
-    start_task() >> create_table()
-    create_table() >> download_blogs_from_rss_task() >> extract_articles_task() >> join_task()
-    create_table() >> blog_scraper_task() >> join_task()
+    start_task() >> create_table_task() >> download_blogs_from_rss_task() >> extract_articles_task()
 
 
-# register DAG
 test_pipeline()

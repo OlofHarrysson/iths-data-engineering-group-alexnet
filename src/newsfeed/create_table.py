@@ -57,11 +57,11 @@ def create_table():
         password = data["DB_password"]
 
     # server name and db name.
-    server_name = "localhost"
+    server_name = "postgres"
     database_name = "postgres"
 
     # postgreSQL database connection URL
-    DB_URL = f"postgresql://{username}:{password}@{server_name}/{database_name}"
+    DB_URL = f"postgresql://{username}:{password}@{server_name}/postgres"
 
     print("Connecting to database using URL string:")
 
