@@ -111,17 +111,6 @@ blog_scraper_task = PythonOperator(
     dag=dag,
 )
 
-data_parser_task = PythonOperator(
-    task_id="data_parser",
-    python_callable=data_parser,
-    dag=dag,
-)
-
-summary_parser_task = PythonOperator(
-    task_id="summary_parser",
-    python_callable=summary_parser,
-    dag=dag,
-)
 
 discord_task = PythonOperator(
     task_id="discord",
@@ -151,6 +140,5 @@ choose_branch_task >> download_blogs_from_rss_task >> extract_articles_task
 choose_branch_task >> blog_scraper_task
 extract_articles_task >> join
 blog_scraper_task >> join
-join >> data_parser_task
-data_parser_task >> discord_task >> end
-data_parser_task >> app_task >> end
+join >> discord_task >> end
+join >> app_task >> end
