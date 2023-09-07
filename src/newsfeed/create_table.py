@@ -1,25 +1,15 @@
 import json
+import logging
 
-from sqlalchemy import (
-    TIMESTAMP,
-    Column,
-    Date,
-    ForeignKey,
-    Integer,
-    String,
-    Text,
-    UniqueConstraint,
-    create_engine,
-    inspect,
-    text,
-)
+from sqlalchemy import *
 from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 Base = declarative_base()
+logger = logging.getLogger(__name__)
 
 
-# table class
+# Custom classes to define the SQL tables
 class BlogInfo(Base):
     __tablename__ = "bloginfo"
 
@@ -33,7 +23,6 @@ class BlogInfo(Base):
     timestamp = Column(TIMESTAMP)
 
 
-# table class
 class BlogSummaries(Base):
     __tablename__ = "blog_summaries"
 
@@ -49,39 +38,43 @@ class BlogSummaries(Base):
 
 
 def create_table():
-    # gets password and username.
     with open("api-key.json") as file:
         data = json.load(file)
 
         username = data["DB_username"]
         password = data["DB_password"]
+        server_name = data["DB_server_name"]
+        database_name = data["DB_database_name"]
 
-    # server name and db name.
-    server_name = "postgres"
-    database_name = "postgres"
+    connection_string = f"postgresql://{username}:{password}@{server_name}/{database_name}"
+    print(f"Connecting to database using string: {connection_string}")
+    logger.info(f"Connecting to database using string: {connection_string}")
 
-    # postgreSQL database connection URL
-    DB_URL = f"postgresql://{username}:{password}@{server_name}/postgres"
-
-    print("Connecting to database using URL string:")
-
-    # try to connect to db.
     try:
-        engine = create_engine(DB_URL)
+        engine = create_engine(connection_string)
         session = sessionmaker(bind=engine)
 
-        print(f"Successfully connected to {database_name}!")
+        print(f"Successfully connected to {DB_database_name}!")
+        logger.info(f"Successfully connected to {database_name} and created tables.")
 
     except Exception as e:
-        print("Error while connecting to database:\n")
-        print(e)
+        print(f"Error while connecting to database:\n {e}")
+        logger.error(f"Error while connecting to database or creating tables: {e}")
 
-    # inspector object to check if tables exist.
+    # Check if tables exist, else create it.
     inspector = inspect(engine)
 
-    # creates tables if they dont exist.
     if not inspector.has_table("bloginfo") or not inspector.has_table("blog_summaries"):
         Base.metadata.create_all(engine)
         print("Tables created successfully.")
     else:
         print("Tables already exist.")
+
+
+def main():
+    logging.basicConfig(level=logging.INFO)
+    create_table()
+
+
+if __name__ == "__main__":
+    main()
