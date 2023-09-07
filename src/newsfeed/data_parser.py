@@ -17,7 +17,7 @@ with open("api-key.json") as file:
     username = data["DB_username"]
     password = data["DB_password"]
 
-server_name = "localhost"
+server_name = "0.0.0.0:5432"
 database_name = "postgres"
 
 # postgreSQL database connection URL
