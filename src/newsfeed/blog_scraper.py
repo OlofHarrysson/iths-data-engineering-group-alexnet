@@ -1,12 +1,38 @@
 import json
+import logging
 import os
 from datetime import datetime
 
 import requests
 from bs4 import BeautifulSoup
+from sqlalchemy import TIMESTAMP, Column, Date, String, Text, create_engine
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
 from newsfeed.datatypes import BlogInfo
 from newsfeed.extract_articles import create_uuid_from_string
+
+logger = logging.getLogger(__name__)
+
+Base = declarative_base()
+
+
+class BlogInfo(Base):
+    __tablename__ = "bloginfo"
+
+    unique_id = Column(String(255), primary_key=True)
+    title = Column(String(255), nullable=False)
+    description = Column(Text)
+    link = Column(String(255))
+    blog_text = Column(Text)
+    blog_name = Column(String(255))
+    published = Column(Date)
+    timestamp = Column(TIMESTAMP)
+
+
+engine = create_engine("postgresql://airflow:airflow@postgres/postgres")
+Session = sessionmaker(bind=engine)
 
 ### Actual blog text is stored under: ui-richtext
 
@@ -85,6 +111,51 @@ def get_openai_blog_articles(link="https://openai.com/blog"):
                 article_data.append(blog_info)
 
     return article_data
+
+
+def connect_to_database(connection_string: str) -> sessionmaker:
+    """Connect to the PostgreSQL database and return a session."""
+    try:
+        engine = create_engine(connection_string)
+        Session = sessionmaker(bind=engine)
+        logger.info(f"Successfully connected to the database.")
+        return Session()
+    except Exception as e:
+        logger.error(f"Error while connecting to the database:\n{e}")
+        raise
+
+
+def save_articles_to_database(articles, session):
+    for article in articles:
+        try:
+            existing_article = (
+                session.query(BlogInfo).filter_by(unique_id=article.unique_id).first()
+            )
+
+            if existing_article is None:
+                session.add(article)
+                session.commit()
+                print(f"Saved article: {article.title}")
+
+        except IntegrityError as e:
+            print(f"Error: {e}. Skipping duplicate article with ID {article.unique_id}.")
+            session.rollback()
+
+
+def main():
+    connection_string = "postgresql://airflow:airflow@postgres/postgres"  # TODO: Hide this, similar to how its hidden in create_table.py
+    session = connect_to_database(connection_string)
+    articles = get_openai_blog_articles()
+    logger.info("Fetching articles from OpenAI Blog")
+
+    if not articles:
+        logger.info("No articles found")
+
+    else:
+        for i, article in enumerate(articles):
+            logger.info("article.title} found.")
+
+            save_articles_to_database(articles, session)
 
 
 def save_articles_as_json(articles, save_path):

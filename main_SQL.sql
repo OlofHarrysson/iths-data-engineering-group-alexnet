@@ -22,4 +22,11 @@ SELECT bi.*
 FROM bloginfo bi
 LEFT JOIN blog_summaries bs ON bi.unique_id = bs.unique_id
 WHERE bs.unique_id IS NULL
-ORDER BY bi.timestamp DESC;
+ORDER BY bi.published DESC;
+
+SELECT *
+FROM bloginfo
+JOIN blog_summaries ON bloginfo.unique_id = blog_summaries.unique_id
+WHERE blog_summaries.type_of_summary = 'normal'
+ORDER BY bloginfo.published DESC
+LIMIT 1;
