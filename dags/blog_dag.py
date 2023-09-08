@@ -43,18 +43,19 @@ def download_blogs_from_rss_task() -> None:
     newsfeed.download_blogs_from_rss.main("ts")
     newsfeed.blog_scraper.main()  # OpenAI Blog
 
-    
+
 @task(task_id="extract_articles")
 def extract_articles_task() -> None:
     logger.info("Running extract_articles from DAG")
     newsfeed.extract_articles.main("mit")
     newsfeed.extract_articles.main("ts")
 
-    
+
 @task(task_id="discord_bot_summary")
 def run_discord_summary_task() -> None:
     logger.info("Running discord_bot_summary from DAG")
     newsfeed.discord_bot_summary.main()
+
 
 @dag(
     dag_id="article_summary_pipeline",
