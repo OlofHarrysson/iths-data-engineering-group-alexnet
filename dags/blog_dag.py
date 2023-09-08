@@ -51,14 +51,27 @@ def extract_articles_task() -> None:
     newsfeed.extract_articles.main("ts")
 
 
+@task(task_id="discord_bot_summary")
+def run_discord_summary_task() -> None:
+    logger.info("Running discord_bot_summary from DAG")
+    newsfeed.discord_bot_summary.main()
+
+
 @dag(
-    dag_id="test_pipeline",
+    dag_id="article_summary_pipeline",
     start_date=datetime(2023, 6, 2),
     schedule_interval=None,
     catchup=False,
 )
-def test_pipeline() -> None:
-    start_task() >> create_table_task() >> download_blogs_from_rss_task() >> extract_articles_task()
+def article_summary_pipeline() -> None:
+    (
+        start_task()
+        >> create_table_task()
+        >> download_blogs_from_rss_task()
+        >> extract_articles_task()
+        >> run_discord_summary_task()
+        >> end_task()
+    )
 
 
-test_pipeline()
+article_summary_pipeline()
