@@ -8,7 +8,6 @@ import newsfeed
 from newsfeed import (
     blog_scraper,
     create_table,
-    discord_bot_summary,
     download_blogs_from_rss,
     extract_articles,
 )
@@ -37,26 +36,25 @@ def create_table_task() -> None:
     newsfeed.create_table.main()
 
 
-@task(task_id="fetch_articles")
+@task(task_id="download_blogs_from_rss")
 def download_blogs_from_rss_task() -> None:
-    logger.info("Running fetch_articles from DAG")
+    logger.info("Running download_blogs_from_rss from DAG")
     newsfeed.download_blogs_from_rss.main("mit")
     newsfeed.download_blogs_from_rss.main("ts")
     newsfeed.blog_scraper.main()  # OpenAI Blog
 
-
+    
 @task(task_id="extract_articles")
 def extract_articles_task() -> None:
     logger.info("Running extract_articles from DAG")
     newsfeed.extract_articles.main("mit")
     newsfeed.extract_articles.main("ts")
 
-
+    
 @task(task_id="discord_bot_summary")
 def run_discord_summary_task() -> None:
     logger.info("Running discord_bot_summary from DAG")
     newsfeed.discord_bot_summary.main()
-
 
 @dag(
     dag_id="article_summary_pipeline",
