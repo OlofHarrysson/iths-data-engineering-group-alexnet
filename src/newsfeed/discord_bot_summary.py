@@ -30,9 +30,11 @@ import xml.etree.ElementTree as ElementTree
 
 import requests
 import schedule
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql import func
 
 # Import functions from his script
-from newsfeed.summarize import get_latest_article, summarize_text
+from newsfeed.db_engine import connect_to_db
 
 # Load key from api-key.json
 with open("api-key.json") as f:
@@ -40,6 +42,31 @@ with open("api-key.json") as f:
 
 # Get the Discord webhook URL from api-key.json
 DISCORD_WEBHOOK_URL = keys["DISCORD_WEBHOOK_URL"]
+
+
+def get_article(type: str = "normal"):
+    engine, Base = connect_to_db()
+
+    Blog_summaries = Base.classes.blog_summaries
+    Blog_info = Base.classes.bloginfo
+
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
+    latest_normal_article = (
+        session.query(Blog_info, Blog_summaries)
+        .join(Blog_summaries, Blog_info.unique_id == Blog_summaries.unique_id)
+        .filter(Blog_summaries.type_of_summary == type)
+        .order_by(Blog_info.published.desc())
+        .limit(1)
+        .first()
+    )
+
+    bloginfo, blog_summary = latest_normal_article
+
+    session.close()
+
+    return bloginfo.title, blog_summary.summary, bloginfo.link, bloginfo.published
 
 
 # Animation function for the running dots
@@ -95,7 +122,7 @@ def add_line_breaks(text, line_length):
 # Check for new articles and send summaries
 async def check_and_send(blog_name="mit"):
     # Call get_latest_article from his script
-    title, summary, link, date = get_latest_article(blog_name, summary_type="non_technical")
+    title, summary, link, date = get_article()
 
     send_discord_message(
         DISCORD_WEBHOOK_URL,
