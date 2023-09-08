@@ -66,7 +66,11 @@ def get_article(type: str = "normal"):
 
     session.close()
 
-    return bloginfo.title, blog_summary.summary, bloginfo.link, bloginfo.published
+    title = (
+        blog_summary.translated_title if blog_summary.translated_title != None else bloginfo.title
+    )
+
+    return title, blog_summary.summary, bloginfo.link, bloginfo.published
 
 
 # Animation function for the running dots
