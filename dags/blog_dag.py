@@ -8,9 +8,9 @@ import newsfeed
 from newsfeed import (
     blog_scraper,
     create_table,
+    discord_bot_summary,
     download_blogs_from_rss,
     extract_articles,
-    run_discord_pipline,
 )
 
 logger = logging.getLogger(__name__)
@@ -52,10 +52,10 @@ def extract_articles_task() -> None:
     newsfeed.extract_articles.main("ts")
 
 
-@task(task_id="run_discord_pipeline")
-def run_discord_pipeline_task() -> None:
-    logger.info("Running run_discord_pipeline from DAG")
-    newsfeed.run_discord_pipline.main()
+@task(task_id="discord_bot_summary")
+def run_discord_summary_task() -> None:
+    logger.info("Running discord_bot_summary from DAG")
+    newsfeed.discord_bot_summary.main()
 
 
 @dag(
@@ -70,7 +70,7 @@ def article_summary_pipeline() -> None:
         >> create_table_task()
         >> download_blogs_from_rss_task()
         >> extract_articles_task()
-        >> run_discord_pipeline_task()
+        >> run_discord_summary_task()
         >> end_task()
     )
 
