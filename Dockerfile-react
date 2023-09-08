@@ -1,0 +1,22 @@
+# Build:
+# docker-compose -f docker-compose-react.yml build
+
+# Run:
+# docker-compose -f docker-compose-react.yml up
+
+FROM node:14
+
+WORKDIR /alexnet-dashboard
+
+COPY app/package*.json ./
+
+RUN npm install
+
+COPY app .
+
+RUN npm run build
+
+# Port
+EXPOSE 3000
+
+CMD ["npm", "start"]

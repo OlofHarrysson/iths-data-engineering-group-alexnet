@@ -1,0 +1,10 @@
+---
+version: "3.8"
+services:
+  react-app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile-react
+    container_name: alexnet-dashboard
+    ports:
+    - "80:3000"
