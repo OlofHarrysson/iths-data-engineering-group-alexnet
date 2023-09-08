@@ -1,5 +1,4 @@
-/* CSS Modules automatically generate unique class names to avoid clashes between different components. */
-
+/* header.module.css */
 .alxHeader {
   text-align: left;
   font-family: Arial, Helvetica, sans-serif;
@@ -44,4 +43,37 @@
   color: #ffffff;
   font-size: 0.7rem;
   margin: 0;
+}
+
+/* header.module.css */
+.alxHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Update aboutButton styles */
+.aboutButton {
+  background-color: #24763c;
+  color: #fff;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  /* Add margin to push it to the right */
+  margin-left: 1rem;
+
+  /* Hover styles */
+  &:hover {
+    background-color: #0056b3;
+  }
+}
+
+.aboutButtonText {
+  color: #ffffff; /* White color */
+  /* You can add additional styles here if needed */
+}
+
+.aboutButton:focus {
+  outline: none;
 }

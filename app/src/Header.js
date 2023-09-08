@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './header.module.css';
+import { Link } from 'react-router-dom';
 
 const Header = ({ setSearchQuery }) => {
   return (
@@ -10,18 +11,29 @@ const Header = ({ setSearchQuery }) => {
           <h2>Your Source for Intelligent News Analysis</h2>
         </div>
 
-        {/* Add the Search bar */}
-        <div id="search-bar">
-          <form>
-            <input
-              type="text"
-              id="search-input"
-              placeholder="Search..."
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <button type="submit">Search</button>
-          </form>
-        </div>
+        {/* Add the spacer to push the "About" button to the right */}
+        <div className={styles.spacer}></div>
+
+        <nav>
+          <Link to="/about" className={`${styles.aboutButton} ${styles.aboutButtonText}`}>
+            About
+          </Link>
+        </nav>
+      </div>
+
+      <div id="search-bar" className={styles.searchBar}>
+        <form>
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Search..."
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className={styles.searchInput}
+          />
+          <button type="submit" className={styles.searchButton}>
+            Search
+          </button>
+        </form>
       </div>
     </header>
   );

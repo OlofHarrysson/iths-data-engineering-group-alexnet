@@ -1,16 +1,16 @@
 // This file should contain minimal code that focuses on rendering the root component.
 
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import AppRoutes from './Routes'; // Update this import
 import reportWebVitals from './reportWebVitals';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
+ReactDOM.render(
   <React.StrictMode>
-    <App />
-  </React.StrictMode>
+    <AppRoutes /> {/* Use AppRoutes here */}
+  </React.StrictMode>,
+  document.getElementById('root')
 );
 
 // ------ Metrics ------ // TODO: Move this to other script
@@ -50,3 +50,4 @@ if (userAgent.includes('Windows NT')) {
 
 console.log('Browser Info:', browserInfo);
 console.log('OS Info:', osInfo);
+

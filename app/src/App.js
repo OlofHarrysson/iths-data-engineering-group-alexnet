@@ -6,6 +6,8 @@ import Footer from './Footer';
 import ArticleCard from './articleCard';
 import { toggleDarkMode, getCookie, setCookie } from './darkMode';
 
+import About from './About'; // Import your About component
+
 function App() {
   const initialDarkModePref = getCookie('dark_mode');
   const [darkMode, setDarkMode] = useState(initialDarkModePref === '1');
