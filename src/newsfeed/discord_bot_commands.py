@@ -177,5 +177,33 @@ async def on_command_error(ctx, error):
         await ctx.send("Invalid command. Type !help to see a list of available commands.")
 
 
+# discord_bot_commands.py
+
+
+@bot.command()
+async def setup_newsfeed(ctx, channel: discord.TextChannel):
+    # Check if the user has permission to add the bot to the specified channel
+    if not ctx.author.guild_permissions.manage_channels:
+        await ctx.send("You don't have permission to add the bot to channels.")
+        return
+
+    # Check if the bot is already in the specified channel
+    if channel.permissions_for(ctx.guild.me).read_messages:
+        await ctx.send("The newsfeed bot is already in this channel.")
+        return
+
+    # Read the webhook URL from the shared JSON file
+    with open("webhook-info.json", "r") as webhook_file:
+        webhook_info = json.load(webhook_file)
+
+    # Use webhook_info["webhook_url"] to set up the webhook for the channel
+    webhook_url = webhook_info["webhook_url"]
+
+    # Add your newsfeed bot to the specified channel using webhook_url
+    # ...
+
+    await ctx.send(f"Newsfeed bot has been set up in {channel.mention}!")
+
+
 # Run the bot with your bot token
 bot.run(keys["DISCORD_TOKEN"])  # Use the token loaded from the JSON file

@@ -158,6 +158,14 @@ async def main():
         print(" ", flush=True)  # Clear the line
 
 
+# discord_bot_summary.py
+
+# Store the webhook URL in a JSON file
+webhook_info = {"webhook_url": DISCORD_WEBHOOK_URL}
+with open("webhook-info.json", "w") as webhook_file:
+    json.dump(webhook_info, webhook_file)
+
+
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     try:
