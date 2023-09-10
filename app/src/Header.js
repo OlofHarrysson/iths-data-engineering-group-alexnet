@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './header.module.css';
 import { Link } from 'react-router-dom';
 
-const Header = ({ setSearchQuery }) => {
+const Header = ({ setSearchQuery, handleAddBotClick }) => {
   return (
     <header className={styles.alxHeader}>
       <div className={styles.headerContent}>
@@ -15,9 +15,15 @@ const Header = ({ setSearchQuery }) => {
         <div className={styles.spacer}></div>
 
         <nav>
-          <Link to="/about" className={`${styles.aboutButton} ${styles.aboutButtonText}`}>
-            About
-          </Link>
+        <Link to="/about" className={`${styles.aboutButton} ${styles.aboutButtonText} ${styles.aboutButtonMargin}`}>
+  About
+</Link>
+
+{/* Add the "Add Discord Bot" button */}
+<div className={`discord-button`} onClick={handleAddBotClick}>
+  Add Discord Bot
+</div>
+
         </nav>
       </div>
 
