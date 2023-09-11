@@ -100,7 +100,7 @@ def store_in_database(path: str = None, data: [] = None):
         try:
             session.add(new_record)
             session.commit()
-            # parse_summary(item)
+            parse_summary(item)
         except IntegrityError as e:
             print(f"Error: {e}. Skipping duplicate row with ID {item.unique_id}.")
             session.rollback()  # Rollback the transaction to keep the database in a consistent state
@@ -124,20 +124,21 @@ def parse_summary(article):
     session = Session()
 
     for key in summary_types:
-        if key == "swedish" and article["blog_name"] != "mit":
+        if key == "swedish" and article.blog_name != "mit":
             continue
 
-        if datetime.strptime(article["published"], "%Y-%m-%d") < datetime(2023, 9, 5):
+        if article.published < datetime(2023, 9, 9).date():
+            print("***********SKIPPING ARTICLE BECASUE DATE*************")
             break
 
-        print(f"Sums up '{article['unique_id']} with type: {key}'")
+        print(f"Sums up '{article.unique_id} with type: {key}'")
 
         new_record = Blog_summaries(
-            unique_id=article["unique_id"],
-            translated_title=translate_title(article["title"], key)
+            unique_id=article.unique_id,
+            translated_title=translate_title(article.title, key)
             if key not in ["normal", "non_technical"]
             else None,
-            summary=summarize_text(article["blog_text"], suffix=key),
+            summary=summarize_text(article.blog_text, suffix=key),
             type_of_summary=key,
         )
 
