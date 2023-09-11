@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import jsonData from './aggregated_articles';
-import './App.css';
-import Header from './Header';
-import Footer from './Footer';
-import ArticleCard from './articleCard';
-import { toggleDarkMode, getCookie, setCookie } from './darkMode';
+import jsonData from './data/aggregated_articles';
+import './assets/styles/App.css';
+import Header from './components/Header/Header';
+import Footer from './components/Footer/Footer';
+import ArticleCard from './components/articleCard';
+import { toggleDarkMode, getCookie, setCookie } from './components/darkMode';
 import apiKeys from './api-key.json'; // Adjust the path as needed
 
 
-import About from './About'; // Import your About component
+import About from './components/About/About'; // Import your About component
 
 function App() {
   const initialDarkModePref = getCookie('dark_mode');

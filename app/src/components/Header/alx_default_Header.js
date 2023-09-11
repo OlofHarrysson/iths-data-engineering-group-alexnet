@@ -1,4 +1,5 @@
 // components/Header.js
+// Default header
 import React from 'react';
 import styles from './alx_header.module.css';
 
