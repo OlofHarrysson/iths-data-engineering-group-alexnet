@@ -12,6 +12,10 @@
   align-items: center;
 }
 
+.alxHeader a {
+  text-decoration: none;
+}
+
 .headerContent {
   display: flex;
   justify-content: space-between;
