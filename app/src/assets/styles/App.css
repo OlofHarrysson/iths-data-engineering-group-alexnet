@@ -1,10 +1,12 @@
-/* Light Mode Styles */
+/* Default Light Mode Styles */
 body {
   background-color: white;
   color: black;
 }
 
-/* Containers for all article-cards */
+/* ---- Containers for all article-card ---- */
+
+/* Spacing for cards / Card area */
 .card-space {
   margin-top: 0.66rem;
   margin-right: 2rem;
@@ -14,6 +16,7 @@ body {
   grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
 }
 
+/* Media queries for screen sizes*/
 @media (max-width: 840px) {
   .card-space {
     margin-right: 0rem;
@@ -28,6 +31,7 @@ body {
   }
 }
 
+/* Actual Cards */
 .articles-card {
   background-color: #e9e9e9;
   padding-left: 1rem;
@@ -41,12 +45,14 @@ body {
   border-radius: 0.2rem;
 }
 
+/* Bottom of cards */
 .article-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
+/* Bottom of card links */
 .article-footer a {
   padding-left: 5px;
   padding-right: 5px;
@@ -60,7 +66,6 @@ body {
 }
 
 /* Dark Mode Styles */
-
 .dark-mode {
   background-color: #303238;
   color: #f2f3f5;
@@ -72,7 +77,7 @@ body {
   border-right: 1px solid #202124;
 }
 
-.dark-mode a {
+.dark-mode .articles-card a {
   color: #02b7ff;
   text-decoration: none;
 
@@ -84,60 +89,8 @@ body {
 
 }
 
-/* Updated Footer Styles */
-.bottom_footer {
-  background-color: #333;
-  color: #fff;
-  text-align: center;
-  padding: 10px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  border-top: 1px solid #433f3f;
-}
+.dark-mode a {
+  color: #02b7ff;
+  text-decoration: none;
 
-/* Dark Mode Toggle Button Styles */
-.bottom_footer .dark-mode-toggle {
-  background-color: rgba(0, 0, 0, 0.619);
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease-in-out;
-}
-
-.bottom_footer .dark-mode-toggle:hover {
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-.bottom_footer .dark-mode-toggle span {
-  color: white;
-  font-size: 14px;
-}
-
-/* Example Text Div Styles */
-/* TODO: Decide what data should be displayed here */
-.example-text-column {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-left: 10px;
-}
-
-.bottom_footer .example-text {
-  margin-top: -10px;
-  margin-bottom: -10px;
-  text-align: center;
-}
-
-button {
-  padding: 10px 20px;
-  background-color: #24763c;
-  color: #ffffff;
-  border: none;
-  cursor: pointer;
 }
