@@ -5,12 +5,16 @@ import { Link } from 'react-router-dom';
 const Header = ({ setSearchQuery, handleAddBotClick }) => {
   return (
     <header className={styles.alxHeader}>
-      <div className={styles.headerContent}>
-        <div className={styles.title}>
-          <h1>AAIN: Alexnet AI Newsfeed</h1>
-          <h2>Your Source for Intelligent News Analysis</h2>
+
+      {/* Title and subtitle wrapped in a Link */}
+      <Link to="/" className={styles.headerLink}>
+        <div className={styles.headerContent}>
+          <div className={styles.title}>
+            <h1>AAIN: Alexnet AI Newsfeed</h1>
+            <h2>Your Source for Intelligent News Analysis</h2>
+          </div>
         </div>
-      </div>
+      </Link>
 
       <div id="header-search-bar" className={styles.headerSearchBar}>
         <form>

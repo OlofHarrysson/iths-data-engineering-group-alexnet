@@ -2,14 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './About.css';
 import Footer from '../Footer/Footer';
+import HeaderSansSearch from '../Header/HeaderNoSearch';
 
 
 const About = () => {
   return (
     <div>
-      <div className="header">
-        <h1>About Us</h1>
-      </div>
+      <HeaderSansSearch />
       <div className="content">
         <p>Welcome to the AI Newsfeed "About" Page</p>
         <h2>Introduction:</h2>
