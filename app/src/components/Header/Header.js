@@ -10,35 +10,17 @@ const Header = ({ setSearchQuery, handleAddBotClick }) => {
           <h1>AAIN: Alexnet AI Newsfeed</h1>
           <h2>Your Source for Intelligent News Analysis</h2>
         </div>
-
-        {/* Add the spacer to push the "About" button to the right */}
-        <div className={styles.spacer}></div>
-
-        <nav>
-        <Link to="/about" className={`${styles.aboutButton} ${styles.aboutButtonText} ${styles.aboutButtonMargin}`}>
-  About
-</Link>
-
-{/* Add the "Add Discord Bot" button */}
-<div className={`discord-button`} onClick={handleAddBotClick}>
-  Add Discord Bot
-</div>
-
-        </nav>
       </div>
 
-      <div id="search-bar" className={styles.searchBar}>
+      <div id="header-search-bar" className={styles.headerSearchBar}>
         <form>
           <input
             type="text"
             id="search-input"
-            placeholder="Search..."
+            placeholder="Search articles..."
             onChange={(e) => setSearchQuery(e.target.value)}
             className={styles.searchInput}
           />
-          <button type="submit" className={styles.searchButton}>
-            Search
-          </button>
         </form>
       </div>
     </header>

@@ -7,6 +7,9 @@
   margin: 0;
   padding: 20;
   box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .headerContent {
@@ -45,61 +48,13 @@
   margin: 0;
 }
 
-/* header.module.css */
-.alxHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* Search bar styles */
+.headerSearchBar {
+  margin-right: 3.3rem;
 }
 
-/* Update aboutButton styles */
-.aboutButton {
-  background-color: #24763c;
-  color: #fff;
-  padding: 10px 20px;
-  text-decoration: none;
-  border-radius: 4px;
-  transition: background-color 0.3s;
-  margin-right: 1rem; /* Add margin to push it to the right */
-  width: 50px; /* Add a fixed width */
-  height: 30px; /* Add a fixed height */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-
-
-  /* Hover styles */
-  &:hover {
-    background-color: #0056b3;
+@media (max-width: 840px) {
+  .headerSearchBar {
+    margin-right: 0rem;
   }
-}
-
-.aboutButtonText {
-  color: #ffffff; /* White color */
-  /* You can add additional styles here if needed */
-}
-
-.aboutButton:focus {
-  outline: none;
-}
-
-/* Update the Discord button styles */
-.discord-button {
-  background-color: #7289DA; /* Discord blue color */
-  color: #ffffff; /* White text color */
-  padding: 10px 20px; /* Padding for the button */
-  cursor: pointer; /* Show pointer cursor on hover */
-  border-radius: 4px; /* Rounded corners */
-  margin-left: 10px; /* Adjust the margin as needed */
-}
-
-.discord-button:hover {
-  background-color: #677BC4; /* Darker blue color on hover */
-}
-
-
-/* Add margin to the About button to push it to the right */
-.aboutButtonMargin {
-  margin-right: 1rem;
 }
