@@ -4,6 +4,10 @@ To get dependencies (node modules), in this directory run:
 
 "npm install"
 
+then do:
+
+"npm install react-router-dom"
+
 Then, run:
 
 "npm start" in this directorty
