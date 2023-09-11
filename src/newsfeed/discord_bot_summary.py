@@ -27,6 +27,7 @@ import asyncio
 import json
 import os
 import xml.etree.ElementTree as ElementTree
+from datetime import datetime
 
 import requests
 import schedule
@@ -49,6 +50,7 @@ def get_article(type: str = "normal"):
 
     Blog_summaries = Base.classes.blog_summaries
     Blog_info = Base.classes.bloginfo
+    Bot_history = Base.classes.bot_history
 
     Session = sessionmaker(bind=engine)
     session = Session()
@@ -64,13 +66,31 @@ def get_article(type: str = "normal"):
 
     bloginfo, blog_summary = latest_normal_article
 
+    published = (
+        session.query(Bot_history)
+        .filter_by(unique_id=bloginfo.unique_id, type_of_summary=blog_summary.type_of_summary)
+        .first()
+    )
+
+    if published is None:
+        print(f"adding article '{bloginfo.unique_id}' to history")
+
+        new_record = Bot_history(
+            unique_id=bloginfo.unique_id,
+            type_of_summary=blog_summary.type_of_summary,
+            publish_stamp=datetime.now(),
+        )
+
+        session.add(new_record)
+        session.commit()
+
     session.close()
 
     title = (
         blog_summary.translated_title if blog_summary.translated_title != None else bloginfo.title
     )
 
-    return title, blog_summary.summary, bloginfo.link, bloginfo.published
+    return title, blog_summary.summary, bloginfo.link, bloginfo.published, published is not None
 
 
 # Animation function for the running dots
@@ -124,18 +144,22 @@ def add_line_breaks(text, line_length):
 
 
 # Check for new articles and send summaries
-async def check_and_send(blog_name="mit"):
+async def check_and_send(summary_type="normal"):
     # Call get_latest_article from his script
-    title, summary, link, date = get_article()
+    title, summary, link, date, published = get_article(summary_type)
 
-    send_discord_message(
-        DISCORD_WEBHOOK_URL,
-        "alexnet",
-        title,
-        add_line_breaks(summary, 20),
-        date.strftime("%Y-%m-%d"),
-        link,
-    )
+    if published == False:
+        send_discord_message(
+            DISCORD_WEBHOOK_URL,
+            "alexnet",
+            title,
+            add_line_breaks(summary, 20),
+            date.strftime("%Y-%m-%d"),
+            link,
+        )
+
+    else:
+        print("latest article has already been published!")
 
     await asyncio.sleep(5)
 

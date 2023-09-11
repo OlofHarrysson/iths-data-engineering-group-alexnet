@@ -5,6 +5,8 @@ from sqlalchemy import *
 from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.orm import declarative_base, sessionmaker
 
+from newsfeed.db_engine import connect_to_db
+
 Base = declarative_base()
 logger = logging.getLogger(__name__)
 
@@ -37,25 +39,26 @@ class BlogSummaries(Base):
     )
 
 
+class BotHistory(Base):
+    __tablename__ = "bot_history"
+
+    publish_id = Column(Integer, primary_key=True, autoincrement=True)
+    unique_id = Column(String(255), ForeignKey("bloginfo.unique_id"))
+    type_of_summary = Column(String(255), server_default=text("'DefaultSummaryType'"))
+    publish_stamp = Column(TIMESTAMP)
+
+    __table_args__ = (
+        UniqueConstraint("unique_id", "type_of_summary", name="unique_summary_per_published_type"),
+    )
+
+
 def create_table():
-    with open("api-key.json") as file:
-        data = json.load(file)
-
-        username = data["DB_username"]
-        password = data["DB_password"]
-        server_name = data["DB_server_name"]
-        database_name = data["DB_database_name"]
-
-    connection_string = f"postgresql://{username}:{password}@{server_name}/{database_name}"
-    print(f"Connecting to database using string: {connection_string}")
-    logger.info(f"Connecting to database using string: {connection_string}")
-
     try:
-        engine = create_engine(connection_string)
+        engine, _ = connect_to_db()
         session = sessionmaker(bind=engine)
 
-        print(f"Successfully connected to {DB_database_name}!")
-        logger.info(f"Successfully connected to {database_name} and created tables.")
+        # print(f"Successfully connected to {database_name}!")
+        # logger.info(f"Successfully connected to {database_name} and created tables.")
 
     except Exception as e:
         print(f"Error while connecting to database:\n {e}")
@@ -64,7 +67,11 @@ def create_table():
     # Check if tables exist, else create it.
     inspector = inspect(engine)
 
-    if not inspector.has_table("bloginfo") or not inspector.has_table("blog_summaries"):
+    if (
+        not inspector.has_table("bloginfo")
+        or not inspector.has_table("blog_summaries")
+        or not inspector.has_table("bot_history")
+    ):
         Base.metadata.create_all(engine)
         print("Tables created successfully.")
     else:
