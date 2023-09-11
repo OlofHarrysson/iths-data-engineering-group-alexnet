@@ -19,13 +19,24 @@ const About = () => {
         <p>AI Newsfeed was founded in [Year] by a team of dedicated AI experts and technology enthusiasts. What started as a passion project has grown into a leading platform for AI-related news and insights. Our journey has been marked by a commitment to providing accurate, up-to-date, and informative content to our readers.</p>
         <Link to="/">Go back to Home</Link>
       </div>
-      <div className="Team">
-      <img src="https://img.freepik.com/premium-photo/collaboration-diversity-team-success-accounting-corporate-business-people-standing-together-support-portrait-smile-finance-employees-partnership-law-agency-office_590464-85793.jpg?w=2000" class="srs-image"/>
-      </div>
-      <div className="Values">
 
-      </div>
+  <div className="Team">
+    <div className="image-container">
+      <img src="https://img.freepik.com/premium-photo/collaboration-diversity-team-success-accounting-corporate-business-people-standing-together-support-portrait-smile-finance-employees-partnership-law-agency-office_590464-85793.jpg?w=2000" alt="Team" className="srs-image" />
+    </div>
 
+  <div className="center-container">
+    <div className="team-text">
+      We are:
+      <li>Driven.</li>
+      <li>Unlimited.</li>
+      <li>Moral.</li>
+      <li>Business.</li>
+    </div>
+  </div>
+
+
+</div>
 
       <Footer />
 
