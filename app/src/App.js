@@ -5,10 +5,7 @@ import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 import ArticleCard from './components/articleCard';
 import { toggleDarkMode, getCookie, setCookie } from './components/darkMode';
-import apiKeys from './api-key.json'; // Adjust the path as needed
-
-
-import About from './components/About/About'; // Import your About component
+import apiKeys from './data/api-key.json'; // Adjust the path as needed
 
 function App() {
   const initialDarkModePref = getCookie('dark_mode');

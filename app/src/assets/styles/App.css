@@ -134,54 +134,10 @@ body {
   text-align: center;
 }
 
-/* Search bar styles */
-#search-bar {
-  text-align: center;
-
-  margin: 20px;
-}
-
-#search-input {
-  padding: 10px;
-  width: 300px;
-}
-
 button {
   padding: 10px 20px;
   background-color: #24763c;
   color: #ffffff;
   border: none;
   cursor: pointer;
-}
-
-/* Update the Discord button styles */
-.discord-button {
-  background-color: #7289DA; /* Discord blue color */
-  color: #ffffff; /* White text color */
-  padding: 10px 20px; /* Padding for the button */
-  cursor: pointer; /* Show pointer cursor on hover */
-  border-radius: 4px; /* Rounded corners */
-  margin-left: 10px; /* Adjust the margin as needed */
-}
-
-.discord-button:hover {
-  background-color: #677BC4; /* Darker blue color on hover */
-}
-
-
-/* Update aboutButton styles */
-.aboutButton {
-  background-color: #24763c;
-  color: #fff;
-  padding: 100px 21110px;
-  text-decoration: none;
-  border-radius: 4px;
-  transition: background-color 0.3s;
-  /* Add margin to push it to the right */
-  margin-left: 1rem;
-  margin-right: 1rem; /* Add margin to move it to the right */
-  /* Hover styles */
-  &:hover {
-    background-color: #0056b3;
-  }
 }
