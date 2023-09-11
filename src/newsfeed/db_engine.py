@@ -13,7 +13,7 @@ def connect_to_db():
         server_name = data["DB_server_name"]
         database_name = data["DB_database_name"]
 
-    connection_string = f"postgresql://{username}:{password}@{server_name}/{database_name}"
+    connection_string = f"postgresql://{username}:{password}@localhost/{database_name}"
     print(f"Connecting to database using string: {connection_string}")
 
     try:
