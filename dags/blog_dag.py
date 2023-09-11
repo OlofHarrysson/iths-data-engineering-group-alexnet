@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from datetime import datetime
 
@@ -8,6 +9,7 @@ import newsfeed
 from newsfeed import (
     blog_scraper,
     create_table,
+    discord_bot_summary,
     download_blogs_from_rss,
     extract_articles,
 )
@@ -54,7 +56,7 @@ def extract_articles_task() -> None:
 @task(task_id="discord_bot_summary")
 def run_discord_summary_task() -> None:
     logger.info("Running discord_bot_summary from DAG")
-    newsfeed.discord_bot_summary.main()
+    asyncio.run(newsfeed.discord_bot_summary.main())  # Wrap the asyncio code
 
 
 @dag(

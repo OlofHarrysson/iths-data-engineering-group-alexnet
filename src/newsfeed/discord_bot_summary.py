@@ -126,7 +126,11 @@ def add_line_breaks(text, line_length):
 # Check for new articles and send summaries
 async def check_and_send(blog_name="mit"):
     # Call get_latest_article from his script
-    title, summary, link, date = get_article()
+    try:  # Bug testing
+        title, summary, link, date = get_article()
+    except TypeError as e:
+        print(f"An error occurred: {e}")
+        return
 
     send_discord_message(
         DISCORD_WEBHOOK_URL,
@@ -145,7 +149,7 @@ async def main():
     dot_animation_task = asyncio.create_task(animate_dots())
 
     try:
-        await asyncio.gather(check_and_send(), asyncio.sleep(10))  # Sleep for 10 seconds
+        await asyncio.gather(check_and_send("openai"), asyncio.sleep(10))  # Sleep for 10 seconds
     except KeyboardInterrupt:
         print("\r[+] Bot interrupted  ", flush=True)
         for task in asyncio.all_tasks():
