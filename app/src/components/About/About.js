@@ -21,11 +21,12 @@ const About = () => {
         <Link to="/">Go back to Home</Link>
       </div>
       <div className="Team">
-      // Team with images?
+      <img src="https://img.freepik.com/premium-photo/collaboration-diversity-team-success-accounting-corporate-business-people-standing-together-support-portrait-smile-finance-employees-partnership-law-agency-office_590464-85793.jpg?w=2000" class="srs-image"/>
       </div>
       <div className="Values">
 
       </div>
+
 
       <Footer />
 

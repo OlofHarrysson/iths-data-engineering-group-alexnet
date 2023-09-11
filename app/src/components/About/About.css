@@ -1,5 +1,15 @@
 /* About.css */
 
+.srs-image {
+  display: block;
+  width: 50%;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2rem;
+  margin-bottom: 10rem;
+}
+
 .about-container {
     max-width: 800px;
     margin: 0 auto;
