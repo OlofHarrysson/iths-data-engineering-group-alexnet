@@ -39,7 +39,7 @@ intents.typing = False
 intents.presences = False
 intents.message_content = True  # Enable message content intent
 
-from newsfeed.summarize import get_latest_article, summarize_text, summary_types
+from newsfeed.summarize import discord_bot_summary, get_latest_article, summary_types
 
 
 # Define a custom help command class

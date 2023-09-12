@@ -22,11 +22,6 @@ def start_task() -> None:
     logger.info("Starting pipeline...")
 
 
-@task(task_id="join")
-def join_task() -> None:
-    logger.info("Joining tasks...")
-
-
 @task(task_id="end")
 def end_task() -> None:
     logger.info("Ending pipeline...")
@@ -56,7 +51,7 @@ def extract_articles_task() -> None:
 @task(task_id="discord_bot_summary")
 def run_discord_summary_task() -> None:
     logger.info("Running discord_bot_summary from DAG")
-    asyncio.run(newsfeed.discord_bot_summary.main())  # Wrap the asyncio code
+    asyncio.run(newsfeed.discord_bot_summary.main())
 
 
 @dag(

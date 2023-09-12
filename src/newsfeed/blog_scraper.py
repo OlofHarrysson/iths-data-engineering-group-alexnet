@@ -113,7 +113,9 @@ def get_openai_blog_articles(link="https://openai.com/blog"):
     return article_data
 
 
-def connect_to_database(connection_string: str) -> sessionmaker:
+def connect_to_database(
+    connection_string: str,
+) -> sessionmaker:  ## TODO REFACTOR THIS TO USE THE SAME FUNCTION AS IN db_engine.py
     """Connect to the PostgreSQL database and return a session."""
     try:
         engine = create_engine(connection_string)
@@ -187,8 +189,3 @@ if __name__ == "__main__":
 
         save_path = "data/data_warehouse/openai/articles"
         save_articles_as_json(articles, save_path)
-
-
-## Todo,
-# 1. Fix so that everything works through main
-# 2. Fix so that BlogInfo class is used within blog_scraper.py

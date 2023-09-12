@@ -16,7 +16,6 @@ class BlogInfo(pydantic.BaseModel):
     timestamp: datetime
 
     def get_filename(self):
-        # filename = f'{self.title.replace(" ", "_")}.json'
         filename = f"{self.unique_id}_{self.title.replace(' ', '_')}.json"
 
         return filename

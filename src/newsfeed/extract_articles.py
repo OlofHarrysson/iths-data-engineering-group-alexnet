@@ -57,8 +57,8 @@ def extract_mit_articles_from_xml(parsed_xml, blog_name):
 def extract_tensorflow_articles_from_xml(parsed_xml, blog_name):
     articles = []
     for item in parsed_xml.find_all("item"):
-        encoded_element = item.find("encoded")
-        raw_blog_text = encoded_element.text if encoded_element else ""
+        encoded_element = item.find("encoded")  # Can we remove this?
+        raw_blog_text = encoded_element.text if encoded_element else ""  # Can we remove this?
 
         title = item.title.text if item.title else ""
         unique_id = create_uuid_from_string(title)
@@ -104,7 +104,7 @@ def fetch_blog_content(link):
     return None
 
 
-def save_articles(articles, blog_name):
+def save_articles(articles, blog_name):  # Used for local testing, Discontinued due to database
     save_dir = Path("data/data_warehouse", blog_name, "articles")
     save_dir.mkdir(exist_ok=True, parents=True)
     for article in articles:

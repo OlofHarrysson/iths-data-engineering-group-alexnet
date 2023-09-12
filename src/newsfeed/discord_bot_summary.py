@@ -85,8 +85,6 @@ async def get_article(type: str = "normal"):
         session.add(new_record)
         session.commit()
 
-    # session.close()
-
     title = (
         blog_summary.translated_title if blog_summary.translated_title != None else bloginfo.title
     )
