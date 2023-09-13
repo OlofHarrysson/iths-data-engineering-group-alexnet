@@ -6,6 +6,14 @@
 - Runs our tests automatically in the test folder with Pytest
 - Runs Pre-commit code to ensure the quality standard of the code is set via running our code through different tools. Such as black formatter and iSort.
 
+### ⚛️ Dockerfile-React
+- Contains all necessary information to spin up our React docker container
+
+### 🐳 docker-compose-react.yml
+- Defines docker container setup for React app (Dashboard)
+
+### 🚀 app
+- React packages and our Dashboard components for back- and frontend (javascript, css, html)
 ### 🌐 blog_dag.py
 - This is a DAG file, pipeline instructions we use for our airflow pipeline.
 - It contains all the steps and functions we need to run our entire program from start to finish.
@@ -79,7 +87,7 @@
 - Checks to see if the code meets our style and quality before we can commit the code to github.
 - If not returns an error we need to fix before we can continue
 
-### 🤫 API-Key.json
+### 🤫 api-key.json
 - Shhhh (contains our secrets), Is not pushed to github.
 
 ### 🐳 docker-compose.yml
