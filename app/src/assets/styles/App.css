@@ -1,0 +1,96 @@
+/* Default Light Mode Styles */
+body {
+  background-color: white;
+  color: black;
+}
+
+/* ---- Containers for all article-card ---- */
+
+/* Spacing for cards / Card area */
+.card-space {
+  margin-top: 0.66rem;
+  margin-right: 2rem;
+  margin-left: 2rem;
+  display: grid;
+  gap: 1px;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+}
+
+/* Media queries for screen sizes*/
+@media (max-width: 840px) {
+  .card-space {
+    margin-right: 0rem;
+    margin-left: 0rem;
+  }
+}
+
+@media (min-width: 841px) {
+  .card-space {
+    margin-right: 4rem;
+    margin-left: 4rem;
+  }
+}
+
+/* Actual Cards */
+.articles-card {
+  background-color: #e9e9e9;
+  padding-left: 1rem;
+  padding-right: 0.6rem;
+  padding-top: 0.1rem;
+  margin-left: 0.33rem;
+  margin-right: 0.33rem;
+  margin-top: 0rem;
+  margin-bottom: 0.66rem;
+  border-left: 2px solid #41c241;
+  border-radius: 0.2rem;
+}
+
+/* Bottom of cards */
+.article-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Bottom of card links */
+.article-footer a {
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  background-color: #e9e9e9;
+  border-radius: 20px;
+  border: 1px solid #ffffff;
+  text-decoration: none;
+
+}
+
+/* Dark Mode Styles */
+.dark-mode {
+  background-color: #303238;
+  color: #f2f3f5;
+}
+
+.dark-mode .articles-card {
+  background-color: #2b2d31;
+  border-left: 2px solid #00ff02;
+  border-right: 1px solid #202124;
+}
+
+.dark-mode .articles-card a {
+  color: #02b7ff;
+  text-decoration: none;
+
+}
+
+.dark-mode .article-footer a {
+  background-color: #26272bc3;
+  border: 1px solid #02b7ff;
+
+}
+
+.dark-mode a {
+  color: #02b7ff;
+  text-decoration: none;
+
+}

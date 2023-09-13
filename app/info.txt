@@ -1,0 +1,15 @@
+# You will need to have Node.js installed on your machine: https://nodejs.org/en
+
+To get dependencies (node modules), in this directory run:
+
+"npm install"
+
+then run:
+
+"npm install react-router-dom"
+
+Then, run:
+
+"npm start" in this directorty
+
+That's it! (Oh, but you might wanna check out generateJsonData.js first)
