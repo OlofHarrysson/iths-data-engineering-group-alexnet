@@ -11,7 +11,7 @@ from sqlalchemy.orm import sessionmaker
 from newsfeed.datatypes import BlogSummary
 from newsfeed.summarize import summarize_text, summary_types, translate_title
 
-with open("api-key.json") as file:
+with open("api-key.json") as file:  ### REFACTOR TO USE SAME FUNCTION AS IN db_engine.py ↓
     data = json.load(file)
 
     username = data["DB_username"]
@@ -31,7 +31,7 @@ try:
         print(f"Successfully connected to {database_name}!")
 except Exception as e:
     print("Error while connecting to database:\n")
-    print(e)
+    print(e)  ### REFACTOR TO USE SAME FUNCTION AS IN db_engine.py ↑
 
 Base = automap_base()
 Base.prepare(engine, reflect=True)
