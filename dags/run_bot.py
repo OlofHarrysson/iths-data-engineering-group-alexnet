@@ -17,10 +17,7 @@ from newsfeed import (
 
 logger = logging.getLogger(__name__)
 
-debug = 1
-
-if debug:
-    start_time = time.time()
+debug = 0
 
 
 @task(task_id="start_bot_cycle")
