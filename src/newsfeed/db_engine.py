@@ -4,7 +4,7 @@ from sqlalchemy import *
 from sqlalchemy.ext.automap import automap_base
 
 
-def connect_to_db():
+def connect_to_db(locally: bool = 0):
     with open("api-key.json") as file:
         data = json.load(file)
 
@@ -13,7 +13,10 @@ def connect_to_db():
         server_name = data["DB_server_name"]
         database_name = data["DB_database_name"]
 
+    if locally:
+        server_name = "localhost:5432"  # Do we care about hiding this? idc
     connection_string = f"postgresql://{username}:{password}@{server_name}/{database_name}"
+
     print(f"Connecting to database using string: {connection_string}")
 
     try:
