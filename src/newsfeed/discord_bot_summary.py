@@ -35,6 +35,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import func
 
 from newsfeed.db_engine import connect_to_db
+from newsfeed.misc import add_line_breaks, animate_dots
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -48,7 +49,10 @@ DISCORD_WEBHOOK_URL = keys["DISCORD_WEBHOOK_URL"]
 
 
 def get_article(type: str = "normal", get_latest: bool = 1, table_name: str = None):
-    engine, Base = connect_to_db(locally)
+    engine, Base = connect_to_db()
+    # Call this with "locally" to run locally.
+    # TODO: Implement it as arg somwehere
+
     print("")
 
     Blog_summaries = Base.classes.blog_summaries
@@ -105,18 +109,6 @@ def get_article(type: str = "normal", get_latest: bool = 1, table_name: str = No
     return title, blog_summary.summary, bloginfo.link, bloginfo.published, published  # is not None
 
 
-# Animation function for the running dots
-def animate_dots():
-    messages = [
-        "[+] Bot running.  ",
-        "[+] Bot running.. ",
-        "[+] Bot running...",
-    ]
-    for message in messages:
-        print(f"\r{message}", end="", flush=True)
-        time.sleep(0.08)
-
-
 # Send message to Discord with Markdown formatting
 def send_discord_message(webhook_url, sender_name, title, summary, published_date, article_link):
     message = (
@@ -131,27 +123,26 @@ def send_discord_message(webhook_url, sender_name, title, summary, published_dat
     response.raise_for_status()
 
 
-def add_line_breaks(text, line_length):
-    line = ""
-    lines = []
-    sentences = text.split(". ")
-
-    for sentence in sentences:
-        line += " " + sentence
-
-        # check if it should add line break.
-        if len(line.split(" ")) >= line_length or sentence == sentences[-1]:
-            lines.append(line)
-            line = ""
-
-    # returns new text with line breakes.
-    return ". \n \n".join(lines)
+# This function will always send latest article
+def send_latest_article(summary_type="normal"):
+    try:
+        title, summary, link, date, _ = get_article(summary_type, get_latest=True)
+        send_discord_message(
+            DISCORD_WEBHOOK_URL,
+            "Alexnet",
+            title,
+            add_line_breaks(summary, 20),
+            date.strftime("%Y-%m-%d"),
+            link,
+        )
+        logger.info("Latest article sent.")
+    except Exception as e:
+        logger.error(f"An error occurred: {e}")
 
 
 # Check for new articles and send summaries
 def check_and_send(summary_type="normal"):
-    # Calls get_article
-    try:  # Bug testing
+    try:
         title, summary, link, date, published = get_article(summary_type)
     except TypeError as e:
         print(f"An error occurred: {e}")
