@@ -1,4 +1,3 @@
-import asyncio
 import logging
 from datetime import datetime
 
@@ -16,9 +15,16 @@ from newsfeed import (
 
 logger = logging.getLogger(__name__)
 
+debug = 1
+
+if debug:
+    start_time = time.time()
+
 
 @task(task_id="start")
 def start_task() -> None:
+    if debug:
+        discord_bot_summary.send_text("Debug: Running blog_dag")
     logger.info("Starting pipeline...")
 
 
@@ -51,7 +57,7 @@ def extract_articles_task() -> None:
 @task(task_id="discord_bot_summary")
 def run_discord_summary_task() -> None:
     logger.info("Running discord_bot_summary from DAG")
-    asyncio.run(newsfeed.discord_bot_summary.main())
+    newsfeed.discord_bot_summary.main()
 
 
 @dag(
