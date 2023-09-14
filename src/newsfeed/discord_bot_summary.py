@@ -34,7 +34,6 @@ import schedule
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import func
 
-# Import functions from his script
 from newsfeed.db_engine import connect_to_db
 
 # Load key from api-key.json

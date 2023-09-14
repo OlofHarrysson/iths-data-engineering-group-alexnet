@@ -1,40 +1,28 @@
 import json
 import os
 from datetime import datetime
-from urllib.parse import unquote
 
-from sqlalchemy import MetaData, create_engine, insert
+from sqlalchemy import MetaData
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import sessionmaker
 
 from newsfeed.datatypes import BlogSummary
+from newsfeed.db_engine import (
+    connect_to_db,  # Assuming db_engine.py is in the same package
+)
 from newsfeed.summarize import summarize_text, summary_types, translate_title
 
-with open("api-key.json") as file:  ### REFACTOR TO USE SAME FUNCTION AS IN db_engine.py ↓
-    data = json.load(file)
+# Use connect_to_db to get engine and Base
+engine, Base = connect_to_db()
 
-    username = data["DB_username"]
-    password = data["DB_password"]
+# Access table classes
+Blog_articles = Base.classes.bloginfo
+Blog_summaries = Base.classes.blog_summaries
 
-server_name = "postgres"
-database_name = "postgres"
-
-# postgreSQL database connection URL
-DB_URL = f"postgresql://{username}:{password}@{server_name}/{database_name}"
-
-print("Connecting to database using URL string:")
-
-try:
-    engine = create_engine(DB_URL)
-    with engine.connect() as connection:
-        print(f"Successfully connected to {database_name}!")
-except Exception as e:
-    print("Error while connecting to database:\n")
-    print(e)  ### REFACTOR TO USE SAME FUNCTION AS IN db_engine.py ↑
-
-Base = automap_base()
-Base.prepare(engine, reflect=True)
+# Create session
+Session = sessionmaker(bind=engine)
+session = Session()
 
 
 def get_data(path: str) -> list:
@@ -44,13 +32,10 @@ def get_data(path: str) -> list:
 
     if os.path.isdir(path):
         data_list = []
-
         files = os.listdir(path)
-
         for file in files:
             with open(os.path.join(path, file)) as data:
                 data_list.append(json.load(data))
-
         return data_list
 
     raise ValueError(f"Error: '{path}' is not a path to a folder or file.")
@@ -110,40 +95,26 @@ def store_in_database(path: str = None, data: [] = None):
 
 def parse_summary(article):
     print("Starting to summarize article.")
-
-    metadata = MetaData()
-    metadata.reflect(engine)
-
-    Base = automap_base(metadata=metadata)
-
-    Base.prepare()
-
-    Blog_summaries = Base.classes.blog_summaries
-
-    Session = sessionmaker(bind=engine)
-    session = Session()
-
     for key in summary_types:
-        if key == "swedish" and article.blog_name != "mit":
+        if key == "swedish" and article["blog_name"] != "mit":
             continue
 
-        if article.published < datetime(2023, 9, 9).date():
-            print("***********SKIPPING ARTICLE BECASUE DATE*************")
+        if article["published"] < datetime(2023, 9, 9).date():
+            print("***********SKIPPING ARTICLE BECAUSE DATE*************")
             break
 
-        print(f"Sums up '{article.unique_id} with type: {key}'")
+        print(f"Sums up '{article['unique_id']} with type: {key}'")
 
         new_record = Blog_summaries(
-            unique_id=article.unique_id,
-            translated_title=translate_title(article.title, key)
+            unique_id=article["unique_id"],
+            translated_title=translate_title(article["title"], key)
             if key not in ["normal", "non_technical"]
             else None,
-            summary=summarize_text(article.blog_text, suffix=key),
+            summary=summarize_text(article["blog_text"], suffix=key),
             type_of_summary=key,
         )
 
         print("Summation success!")
-
         session.add(new_record)
         session.commit()
 
