@@ -22,10 +22,10 @@ Execute this script to automatically collect article summaries and broadcast the
 
 """
 
-# Native to Python
-import asyncio
 import json
+import logging
 import os
+import time
 import xml.etree.ElementTree as ElementTree
 from datetime import datetime
 
@@ -34,8 +34,10 @@ import schedule
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import func
 
-# Import functions from his script
 from newsfeed.db_engine import connect_to_db
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 # Load key from api-key.json
 with open("api-key.json") as f:
@@ -45,8 +47,8 @@ with open("api-key.json") as f:
 DISCORD_WEBHOOK_URL = keys["DISCORD_WEBHOOK_URL"]
 
 
-async def get_article(type: str = "normal"):
-    engine, Base = connect_to_db()
+def get_article(type: str = "normal", get_latest: bool = 1, table_name: str = None):
+    engine, Base = connect_to_db(locally)
     print("")
 
     Blog_summaries = Base.classes.blog_summaries
@@ -56,17 +58,29 @@ async def get_article(type: str = "normal"):
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    latest_normal_article = (
-        session.query(Blog_info, Blog_summaries)
-        .join(Blog_summaries, Blog_info.unique_id == Blog_summaries.unique_id)
-        .filter(Blog_summaries.type_of_summary == type)
-        .order_by(Blog_info.published.desc())
-        .limit(1)
-        .first()
-    )
+    if get_latest:
+        article = (
+            session.query(Blog_info, Blog_summaries)
+            .join(Blog_summaries, Blog_info.unique_id == Blog_summaries.unique_id)
+            .filter(Blog_summaries.type_of_summary == type)
+            .order_by(Blog_info.published.desc())
+            .limit(1)
+            .first()
+        )
 
-    bloginfo, blog_summary = latest_normal_article
+    else:  # duplicate, use for secondary queries
+        article = (
+            session.query(Blog_info, Blog_summaries)
+            .join(Blog_summaries, Blog_info.unique_id == Blog_summaries.unique_id)
+            .filter(Blog_summaries.type_of_summary == type)
+            .order_by(Blog_info.published.desc())
+            .limit(1)
+            .first()
+        )
 
+    bloginfo, blog_summary = article
+
+    # set flag and log if article has been published
     published = (
         session.query(Bot_history)
         .filter_by(unique_id=bloginfo.unique_id, type_of_summary=blog_summary.type_of_summary)
@@ -74,14 +88,13 @@ async def get_article(type: str = "normal"):
     )
 
     if published is None:
-        print(f"adding article '{bloginfo.unique_id}' to history")
+        logger.info(f"{bloginfo.unique_id}' has not been published.")
 
         new_record = Bot_history(
             unique_id=bloginfo.unique_id,
             type_of_summary=blog_summary.type_of_summary,
             publish_stamp=datetime.now(),
         )
-
         session.add(new_record)
         session.commit()
 
@@ -89,32 +102,25 @@ async def get_article(type: str = "normal"):
         blog_summary.translated_title if blog_summary.translated_title != None else bloginfo.title
     )
 
-    return title, blog_summary.summary, bloginfo.link, bloginfo.published, published is not None
+    return title, blog_summary.summary, bloginfo.link, bloginfo.published, published  # is not None
 
 
 # Animation function for the running dots
-async def animate_dots():
+def animate_dots():
     messages = [
-        "[+] Bot running   ",
         "[+] Bot running.  ",
         "[+] Bot running.. ",
         "[+] Bot running...",
-        "[+] Bot running   ",
     ]
-
-    try:
-        while True:
-            for message in messages:
-                print(f"\r{message}", end="", flush=True)
-                await asyncio.sleep(0.2)
-    except asyncio.CancelledError:
-        pass
+    for message in messages:
+        print(f"\r{message}", end="", flush=True)
+        time.sleep(0.08)
 
 
 # Send message to Discord with Markdown formatting
-def send_discord_message(webhook_url, group_name, title, summary, published_date, article_link):
+def send_discord_message(webhook_url, sender_name, title, summary, published_date, article_link):
     message = (
-        f"**Group-name:** {group_name}\n# {title}\n"
+        f"**Breaking News from** {sender_name}\n# {title}\n"
         f"\n\n{summary}\n\n🌐 [Full Article]({article_link})\n\n"
         f"**Published:** {published_date}\n\n"
     )
@@ -143,10 +149,10 @@ def add_line_breaks(text, line_length):
 
 
 # Check for new articles and send summaries
-async def check_and_send(summary_type="normal"):
+def check_and_send(summary_type="normal"):
     # Calls get_article
     try:  # Bug testing
-        title, summary, link, date, published = await get_article(summary_type)
+        title, summary, link, date, published = get_article(summary_type)
     except TypeError as e:
         print(f"An error occurred: {e}")
         return
@@ -154,42 +160,53 @@ async def check_and_send(summary_type="normal"):
     if published == False:
         send_discord_message(
             DISCORD_WEBHOOK_URL,
-            "alexnet",
+            "Alexnet",
             title,
             add_line_breaks(summary, 20),
             date.strftime("%Y-%m-%d"),
             link,
         )
 
+        logger.info("Article sent.")
+        print("Article sent.")
     else:
-        print("latest article has already been published!")
+        print("Debug: latest article has already been published!")
+        send_text(f"Debug: Latest article {link}, has already been sent: {published.publish_stamp}")
 
-    await asyncio.sleep(5)
+    return
 
 
-# asyncio loop and scheduling
-async def main():
-    dot_animation_task = asyncio.create_task(animate_dots())
+def main(debug: bool = False):
+    if debug:
+        if __name__ == "__main__":
+            send_text("Debug: Running from script")
+        else:
+            send_text("Debug: Running from DAG")
+
+        logger.info("Discord bot is fetching articles.")
 
     try:
-        await asyncio.gather(check_and_send(), asyncio.sleep(10))  # Sleep for 10 seconds
-    except KeyboardInterrupt:
-        print("\r[+] Bot interrupted  ", flush=True)
-        for task in asyncio.all_tasks():
-            task.cancel()
-        await asyncio.gather(*asyncio.all_tasks())
+        check_and_send()
+        logger.info("Discord bot is sending article.")
+
+    except Exception as e:
+        logger.error(f"An error occurred: {e}")
+
     finally:
-        dot_animation_task.cancel()  # Cancel the animation task
         print("\r[-] Bot finished ", end="", flush=True)
-        await dot_animation_task  # Wait for animation to finish
         print(" ", flush=True)  # Clear the line
 
 
+def send_text(text: str):
+    embed = {"description": text, "color": 0x00FF00}
+    payload = {"embeds": [embed]}
+    response = requests.post(DISCORD_WEBHOOK_URL, json=payload)
+    response.raise_for_status()
+
+
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    try:
-        loop.run_until_complete(main())
-    except KeyboardInterrupt:
-        pass
-    finally:
-        loop.close()
+    locally = 1
+    main(debug=0)
+
+    # Input SQL-query with data here:
+    # send_discord_message(webhook_url=DISCORD_WEBHOOK_URL, sender_name="Alexnet", title="test", published_date="2023-12-12", summary='normal', article_link='none')
