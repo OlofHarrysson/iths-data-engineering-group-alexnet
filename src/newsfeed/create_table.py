@@ -57,6 +57,9 @@ def create_table():
         engine, _ = connect_to_db()
         session = sessionmaker(bind=engine)
 
+        # print(f"Successfully connected to {database_name}!")
+        # logger.info(f"Successfully connected to {database_name} and created tables.")
+
     except Exception as e:
         print(f"Error while connecting to database:\n {e}")
         logger.error(f"Error while connecting to database or creating tables: {e}")
