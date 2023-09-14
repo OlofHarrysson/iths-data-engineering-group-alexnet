@@ -1,6 +1,6 @@
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from sqlalchemy import MetaData
 from sqlalchemy.exc import IntegrityError
@@ -99,7 +99,8 @@ def parse_summary(article):
         if key == "swedish" and article["blog_name"] != "mit":
             continue
 
-        if article["published"] < datetime(2023, 9, 9).date():
+        current_datetime = datetime.now()
+        if article["published"] < (current_datetime - timedelta(days=2)).date():
             print("***********SKIPPING ARTICLE BECAUSE DATE*************")
             break
 
