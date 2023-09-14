@@ -10,7 +10,7 @@ const Header = ({ setSearchQuery, handleAddBotClick }) => {
       <Link to="/" className={styles.headerLink}>
         <div className={styles.headerContent}>
           <div className={styles.title}>
-            <h1>AAIN: Alexnet AI Newsfeed</h1>
+            <h1>ANN: AlexNet News</h1>
             <h2>Your Source for Intelligent News Analysis</h2>
           </div>
         </div>
