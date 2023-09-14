@@ -14,6 +14,11 @@ from newsfeed import (
     download_blogs_from_rss,
     extract_articles,
 )
+from newsfeed.discord_bot_summary import (
+    send_discord_message,
+    send_latest_article,
+    send_text,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +41,9 @@ def end_task() -> None:
 @task(task_id="discord_bot_summary")
 def run_discord_summary_task() -> None:
     logger.info("Running discord_bot_summary from DAG")
-    newsfeed.discord_bot_summary.main(debug)
+    # newsfeed.discord_bot_summary.main(debug)
+    # newsfeed.discord_bot_summary.check_and_send()
+    newsfeed.discord_bot_summary.send_latest_article()
 
 
 @dag(
