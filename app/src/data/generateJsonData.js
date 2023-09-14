@@ -44,5 +44,6 @@ function aggregateArticles(dirPath) {
 
 }
 
-const dirPath = '../../data/data_warehouse/mit/articles';
+const dirPath = '../../../data/data_warehouse/mit/articles';
+
 aggregateArticles(dirPath);
